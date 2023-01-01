@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "47423839227",
+    "project_id": "squares-addition-ffac8",
+    "storage_bucket": "squares-addition-ffac8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:47423839227:android:a508f7594c623615bbc95e",
+        "android_client_info": {
+          "package_name": "com.nerdcoredevelopment.squaresaddition"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "47423839227-3470c4i380fetidm0bo95lpn374bqk72.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.nerdcoredevelopment.squaresaddition",
+            "certificate_hash": "26af4727096de680a2deaa8f78b17fda045a7a67"
+          }
+        },
+        {
+          "client_id": "47423839227-app5dbedf8m1helliduj8vj99b5mtqn5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrD3LXHVGtopoyJIc1EpLmsjA6BTF1zqs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "47423839227-app5dbedf8m1helliduj8vj99b5mtqn5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
