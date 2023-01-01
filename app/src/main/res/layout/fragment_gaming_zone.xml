@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/root_layout_gaming_zone_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:clickable="true"
     android:focusable="true"
-    android:background="@color/white"
     tools:context=".GamingZoneFragment">
 
     <FrameLayout
@@ -46,11 +46,11 @@
 
     <LinearLayout
         android:id="@+id/best_score_linear_layout"
-        android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
-        app:layout_constraintBottom_toTopOf="@id/user_score_text_input_layout"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/numbers_linear_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/gaming_zone_fragment_title_frame_layout">
@@ -78,50 +78,83 @@
 
     </LinearLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/user_score_text_input_layout"
+    <LinearLayout
+        android:id="@+id/numbers_linear_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="24dp"
-        app:layout_constraintBottom_toTopOf="@id/mystery_factor_linear_layout"
+        android:orientation="horizontal"
+        android:showDividers="middle"
+        android:divider="@drawable/gap_selection_numbers"
+        android:gravity="center"
+        app:layout_constraintBottom_toTopOf="@id/mystery_bonus_linear_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/best_score_linear_layout">
 
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/user_score_app_compat_edit_text"
-            android:layout_width="match_parent"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/first_number_text_input_layout"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="Enter Score (Between 1 to 1000)"
-            android:inputType="number"
-            android:imeOptions="actionDone" />
+            android:hint="1st Number"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 
-    </com.google.android.material.textfield.TextInputLayout>
+            <AutoCompleteTextView
+                android:id="@+id/first_number_value_text"
+                android:layout_width="104dp"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                android:text="1"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/second_number_text_input_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="2nd Number"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+            <AutoCompleteTextView
+                android:id="@+id/second_number_value_text"
+                android:layout_width="104dp"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                android:text="1"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/mystery_factor_linear_layout"
-        android:orientation="horizontal"
+        android:id="@+id/mystery_bonus_linear_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
-        app:layout_constraintBottom_toTopOf="@id/final_score_linear_layout"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/final_score_lines_linear_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/user_score_text_input_layout">
+        app:layout_constraintTop_toBottomOf="@id/numbers_linear_layout">
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/mystery_factor_label_text_view"
+            android:id="@+id/mystery_bonus_label_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="Mystery Factor : "
+            android:text="Mystery Bonus : "
             android:textAlignment="center"
             android:textColor="@color/black"
             android:textSize="24sp"
             android:textStyle="bold" />
 
         <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/mystery_factor_value_text_view"
+            android:id="@+id/mystery_bonus_value_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -134,37 +167,110 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/final_score_linear_layout"
-        android:orientation="horizontal"
+        android:id="@+id/final_score_lines_linear_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
+        android:divider="@drawable/gap_final_score_lines"
+        android:showDividers="middle"
+        android:orientation="vertical"
         app:layout_constraintBottom_toTopOf="@id/action_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/mystery_factor_linear_layout">
+        app:layout_constraintTop_toBottomOf="@id/mystery_bonus_linear_layout">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/final_score_label_text_view"
+        <LinearLayout
+            android:id="@+id/final_score_line1_linear_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="Final Score = "
-            android:textAlignment="center"
-            android:textColor="@color/black"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone"
+            android:orientation="horizontal">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/final_score_value_text_view"
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/final_score_label_line1_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Final Score = "
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                android:textStyle="normal" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/final_score_value_line1_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                android:textStyle="normal" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/final_score_line2_linear_layout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="\?"
-            android:textAlignment="center"
-            android:textColor="@color/black"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            android:layout_gravity="center_horizontal"
+            android:visibility="gone"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/final_score_label_line2_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Final Score = "
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                android:textStyle="normal" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/final_score_value_line2_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                android:textStyle="normal" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/final_score_line3_linear_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:orientation="horizontal">
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/final_score_label_line3_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="Final Score = "
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/final_score_value_line3_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="\?"
+                android:textAlignment="center"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -177,6 +283,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/final_score_linear_layout" />
+        app:layout_constraintTop_toBottomOf="@id/final_score_lines_linear_layout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
