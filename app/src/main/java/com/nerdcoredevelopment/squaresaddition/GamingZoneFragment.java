@@ -14,8 +14,9 @@ import android.widget.LinearLayout;
 
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,15 +25,16 @@ public class GamingZoneFragment extends Fragment {
     private Context context;
     private OnGamingZoneFragmentInteractionListener mListener;
     private SharedPreferences sharedPreferences;
-    private ConstraintLayout rootConstraintLayout;
     private AppCompatImageView backButton;
     private boolean isFinalScoreCalculated;
     private AppCompatTextView bestScoreTextView;
+    private TextInputLayout firstNumberTextInputLayout;
+    private TextInputLayout secondNumberTextInputLayout;
     private AutoCompleteTextView firstNumberValueTextView;
     private AutoCompleteTextView secondNumberValueTextView;
     private AppCompatTextView mysteryBonusTextView;
+    private LinearLayout finalScoreLine1LinearLayout;
     private LinearLayout finalScoreLine2LinearLayout;
-    private LinearLayout finalScoreLine3LinearLayout;
     private AppCompatTextView finalScoreLine1TextView;
     private AppCompatTextView finalScoreLine2TextView;
     private AppCompatTextView finalScoreLine3TextView;
@@ -48,15 +50,16 @@ public class GamingZoneFragment extends Fragment {
     }
 
     private void initialiseViews(View layoutView) {
-        rootConstraintLayout = layoutView.findViewById(R.id.root_layout_gaming_zone_fragment);
         backButton = layoutView.findViewById(R.id.title_back_gaming_zone_fragment_button);
         bestScoreTextView = layoutView.findViewById(R.id.best_score_value_text_view);
         bestScoreTextView.setText(String.valueOf(sharedPreferences.getInt("bestScore", 0)));
+        firstNumberTextInputLayout = layoutView.findViewById(R.id.first_number_text_input_layout);
+        secondNumberTextInputLayout = layoutView.findViewById(R.id.second_number_text_input_layout);
         firstNumberValueTextView = layoutView.findViewById(R.id.first_number_value_text);
         secondNumberValueTextView = layoutView.findViewById(R.id.second_number_value_text);
         mysteryBonusTextView = layoutView.findViewById(R.id.mystery_bonus_value_text_view);
+        finalScoreLine1LinearLayout = layoutView.findViewById(R.id.final_score_line1_linear_layout);
         finalScoreLine2LinearLayout = layoutView.findViewById(R.id.final_score_line2_linear_layout);
-        finalScoreLine3LinearLayout = layoutView.findViewById(R.id.final_score_line3_linear_layout);
         finalScoreLine1TextView = layoutView.findViewById(R.id.final_score_value_line1_text_view);
         finalScoreLine2TextView = layoutView.findViewById(R.id.final_score_value_line2_text_view);
         finalScoreLine3TextView = layoutView.findViewById(R.id.final_score_value_line3_text_view);
@@ -104,35 +107,46 @@ public class GamingZoneFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (!isFinalScoreCalculated) { // Play the game and calculate the final score
-
-
-                    // Defining the range
                     int max = 100;
                     int min = 1;
                     int range = max - min + 1;
-                    int mysteryFactor = (int) (Math.random() * range) + min;
-                    int enteredUserScore = Integer.parseInt(firstNumberValueTextView.getText().toString());
-                    int finalScore = enteredUserScore * mysteryFactor;
-                    mysteryBonusTextView.setText(String.valueOf(mysteryFactor));
-                    finalScoreLine1TextView.setText(enteredUserScore + " x " + mysteryFactor
-                            + " = " + (finalScore));
+                    int mysteryBonus = (int) (Math.random() * range) + min;
+                    int enteredFirstNumber = Integer.parseInt(firstNumberValueTextView.getText().toString());
+                    int enteredSecondNumber = Integer.parseInt(secondNumberValueTextView.getText().toString());
+                    int finalScore = (enteredFirstNumber * enteredFirstNumber) +
+                            (enteredSecondNumber * enteredSecondNumber) + mysteryBonus;
+
+                    firstNumberTextInputLayout.setEnabled(false);
+                    secondNumberTextInputLayout.setEnabled(false);
+                    mysteryBonusTextView.setText(String.valueOf(mysteryBonus));
+                    finalScoreLine1LinearLayout.setVisibility(View.VISIBLE);
+                    finalScoreLine1TextView.setText("(" + enteredFirstNumber + ")^2 + "
+                            + "(" + enteredSecondNumber + ")^2 + " + mysteryBonus);
+                    finalScoreLine2LinearLayout.setVisibility(View.VISIBLE);
+                    finalScoreLine2TextView.setText((enteredFirstNumber * enteredFirstNumber) + " + " +
+                            (enteredSecondNumber * enteredSecondNumber) + " + " + mysteryBonus);
+                    finalScoreLine3TextView.setText(String.valueOf(finalScore));
                     isFinalScoreCalculated = true;
-                    firstNumberValueTextView.setEnabled(false);
                     if (finalScore > Integer.parseInt(bestScoreTextView.getText().toString())) {
                         sharedPreferences.edit().putInt("bestScore", finalScore).apply();
                         bestScoreTextView.setText(String.valueOf(finalScore));
                     }
                     actionButton.setText("RESET GAME \uD83D\uDD04️");
                 } else { // Reset the game to begin fresh
+                    firstNumberTextInputLayout.setEnabled(true);
+                    secondNumberTextInputLayout.setEnabled(true);
                     isFinalScoreCalculated = false;
                     bestScoreTextView.setText(String.valueOf(sharedPreferences.getInt("bestScore", 0)));
-                    firstNumberValueTextView.setEnabled(true);
-                    if (firstNumberValueTextView.getText().toString().length() > 0) {
-                        firstNumberValueTextView.getText().clear();
-                    }
+                    firstNumberValueTextView.setText("1");
+                    secondNumberValueTextView.setText("1");
                     mysteryBonusTextView.setText("?");
-                    finalScoreLine1TextView.setText("?");
+                    finalScoreLine1LinearLayout.setVisibility(View.INVISIBLE);
+                    finalScoreLine1TextView.setText("");
+                    finalScoreLine2LinearLayout.setVisibility(View.INVISIBLE);
+                    finalScoreLine2TextView.setText("");
+                    finalScoreLine3TextView.setText("?");
                     actionButton.setText("REVEAL FINAL SCORE");
+                    setNumberOptionMenus();
                 }
             }
         });
