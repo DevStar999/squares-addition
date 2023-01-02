@@ -10,12 +10,12 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.fragment.app.Fragment;
 
-public class LeaderboardsFragment extends Fragment {
+public class AchievementsFragment extends Fragment {
     private Context context;
-    private OnLeaderboardsFragmentInteractionListener mListener;
+    private OnAchievementsFragmentInteractionListener mListener;
     private AppCompatImageView backButton;
 
-    public LeaderboardsFragment() {
+    public AchievementsFragment() {
         // Required empty public constructor
     }
 
@@ -29,7 +29,7 @@ public class LeaderboardsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (mListener != null) {
-                    mListener.onLeaderboardsFragmentInteractionBackClicked();
+                    mListener.onAchievementsFragmentInteractionBackClicked();
                 }
             }
         });
@@ -45,26 +45,26 @@ public class LeaderboardsFragment extends Fragment {
                         | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
-        View view = inflater.inflate(R.layout.fragment_leaderboards, container, false);
+        View view = inflater.inflate(R.layout.fragment_achievements, container, false);
 
-        backButton = view.findViewById(R.id.title_back_leaderboards_fragment_button);
+        backButton = view.findViewById(R.id.title_back_achievements_fragment_button);
 
         settingOnClickListeners();
 
         return view;
     }
 
-    public interface OnLeaderboardsFragmentInteractionListener {
-        void onLeaderboardsFragmentInteractionBackClicked();
+    public interface OnAchievementsFragmentInteractionListener {
+        void onAchievementsFragmentInteractionBackClicked();
     }
 
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-        if (context instanceof OnLeaderboardsFragmentInteractionListener) {
-            mListener = (OnLeaderboardsFragmentInteractionListener) context;
+        if (context instanceof OnAchievementsFragmentInteractionListener) {
+            mListener = (OnAchievementsFragmentInteractionListener) context;
         } else {
-            throw new RuntimeException(context + " must implement OnLeaderboardsFragmentInteractionListener");
+            throw new RuntimeException(context + " must implement OnAchievementsFragmentInteractionListener");
         }
         this.context = context;
     }
