@@ -24,6 +24,9 @@ import com.google.android.gms.games.PlayGames;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /*  Notes related to Google Play Games Services (GPGS)
     (1) Consent Screen (In GCP Project) =>
     (2) Anti-Piracy =>
@@ -57,6 +60,7 @@ import com.google.android.gms.tasks.Task;
 public class MainActivity extends AppCompatActivity implements
         NavigationFragment.OnNavigationFragmentInteractionListener,
         GamingZoneFragment.OnGamingZoneFragmentInteractionListener,
+        LeaderboardsFragment.OnLeaderboardsFragmentInteractionListener,
         SettingsFragment.OnSettingsFragmentInteractionListener {
     private AppCompatTextView gpgsSignInStatusTextView;
     private AppCompatImageView gpgsSignInImageView;
@@ -136,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements
             public void onClick(View view) {
                 gamesSignInClient.signIn();
                 // Waiting for 2 seconds for sign-in to complete, then verifying if sign-in was successful or not
-                new CountDownTimer(2000, 10000) {
+                new CountDownTimer(1000, 10000) {
                     @Override
                     public void onTick(long l) {}
                     @Override
@@ -148,42 +152,36 @@ public class MainActivity extends AppCompatActivity implements
         });
     }
 
-    private boolean checkPlayGamesSignIn() {
-        final boolean[] isUserSignedIn = new boolean[1];
+    private void verifyPlayGamesSignIn() {
         gamesSignInClient.isAuthenticated().addOnCompleteListener(new OnCompleteListener<AuthenticationResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthenticationResult> isAuthenticatedTask) {
-                boolean isAuthenticated = (isAuthenticatedTask.isSuccessful() &&
-                        isAuthenticatedTask.getResult().isAuthenticated());
-                isUserSignedIn[0] = isAuthenticated;
+                boolean isAuthenticated = (isAuthenticatedTask.isSuccessful()
+                        && isAuthenticatedTask.getResult().isAuthenticated());
+                if (isAuthenticated) {
+                    // Continue with Play Games Services
+                    gpgsSignInStatusTextView.setText("GPGS Sign In Status : Signed In ✅");
+                    gpgsSignInImageView.setVisibility(View.GONE);
+                    /* TODO -> Remove the following code if we do find a way to implement the 'Enable server-side access'
+                               document in the GPGS documentation
+                    PlayGames.getPlayersClient(MainActivity.this).getCurrentPlayer()
+                            .addOnCompleteListener(new OnCompleteListener<Player>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Player> task) {
+                            String playerId = task.getResult().getPlayerId();
+                        }
+                    });
+                    */
+                } else {
+                    // Disable your integration with Play Games Services or show a login button to ask players to sign-in.
+                    // Clicking it should call GamesSignInClient.signIn().
+                    /* Own Notes - As of right now, the default settings for UI (i.e. buttons & text-views etc. related to
+                                   sign-in) and other things is to accommodate the state where is user is not signed in to
+                                   GPGS as default or else we would have not kept this code branch as empty.
+                    */
+                }
             }
         });
-        return isUserSignedIn[0];
-    }
-
-    private void verifyPlayGamesSignIn() {
-        if (checkPlayGamesSignIn()) {
-            // Continue with Play Games Services
-            gpgsSignInStatusTextView.setText("GPGS Sign In Status : Signed In ✅");
-            gpgsSignInImageView.setVisibility(View.GONE);
-            /* TODO -> Remove the following code if we do find a way to implement the 'Enable server-side access'
-                       document in the GPGS documentation
-            PlayGames.getPlayersClient(MainActivity.this).getCurrentPlayer()
-                    .addOnCompleteListener(new OnCompleteListener<Player>() {
-                @Override
-                public void onComplete(@NonNull Task<Player> task) {
-                    String playerId = task.getResult().getPlayerId();
-                }
-            });
-            */
-        } else {
-            // Disable your integration with Play Games Services or show a login button to ask players to sign-in.
-            // Clicking it should call GamesSignInClient.signIn().
-            /* Own Notes - As of right now, the default settings for UI (i.e. buttons & text-views etc. related to sign-in)
-                           and other things is to accommodate the state where is user is not signed in to GPGS as default or
-                           else we would have not kept this code branch as empty.
-            */
-        }
     }
 
     @Override
@@ -210,7 +208,24 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onNavigationFragmentLeaderboardsClicked() {
-        Toast.makeText(MainActivity.this, "Leaderboards Clicked", Toast.LENGTH_SHORT).show();
+        // If LeaderboardsFragment was opened and is currently on top, then return
+        int countOfFragments = getSupportFragmentManager().getFragments().size();
+        if (countOfFragments > 0) {
+            Fragment topMostFragment = getSupportFragmentManager().getFragments().get(countOfFragments-1);
+            if (topMostFragment != null && topMostFragment.getTag() != null && !topMostFragment.getTag().isEmpty()
+                    && topMostFragment.getTag().equals("LEADERBOARDS_FRAGMENT")) {
+                return;
+            }
+        }
+
+        LeaderboardsFragment fragment = new LeaderboardsFragment();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right,
+                R.anim.enter_from_right, R.anim.exit_to_right);
+        transaction.addToBackStack(null);
+        transaction.add(R.id.full_screen_fragment_container_main_activity,
+                fragment, "LEADERBOARDS_FRAGMENT").commit();
     }
 
     @Override
@@ -242,6 +257,11 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onGamingZoneFragmentInteractionBackClicked() {
+        onBackPressed();
+    }
+
+    @Override
+    public void onLeaderboardsFragmentInteractionBackClicked() {
         onBackPressed();
     }
 
