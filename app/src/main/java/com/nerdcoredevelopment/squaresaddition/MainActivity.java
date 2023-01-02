@@ -7,6 +7,7 @@ import android.os.CountDownTimer;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -200,6 +201,16 @@ public class MainActivity extends AppCompatActivity implements
         transaction.addToBackStack(null);
         transaction.add(R.id.full_screen_fragment_container_main_activity,
                 fragment, "GAMING_ZONE_FRAGMENT").commit();
+    }
+
+    @Override
+    public void onNavigationFragmentLeaderboardsClicked() {
+        Toast.makeText(MainActivity.this, "Leaderboards Clicked", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onNavigationFragmentAchievementsClicked() {
+        Toast.makeText(MainActivity.this, "Achievements Clicked", Toast.LENGTH_SHORT).show();
     }
 
     @Override

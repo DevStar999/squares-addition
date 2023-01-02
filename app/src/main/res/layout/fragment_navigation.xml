@@ -36,6 +36,30 @@
             android:textStyle="bold" />
 
         <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/leaderboards_text_view_navigation_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:background="@drawable/click_navigation_button"
+            android:text="LEADERBOARDS"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/achievements_text_view_navigation_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:background="@drawable/click_navigation_button"
+            android:text="ACHIEVEMENTS"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/settings_text_view_navigation_fragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
