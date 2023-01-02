@@ -148,37 +148,42 @@ public class MainActivity extends AppCompatActivity implements
         });
     }
 
-    private void verifyPlayGamesSignIn() {
+    private boolean checkPlayGamesSignIn() {
+        final boolean[] isUserSignedIn = new boolean[1];
         gamesSignInClient.isAuthenticated().addOnCompleteListener(new OnCompleteListener<AuthenticationResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthenticationResult> isAuthenticatedTask) {
                 boolean isAuthenticated = (isAuthenticatedTask.isSuccessful() &&
-                                            isAuthenticatedTask.getResult().isAuthenticated());
-
-                if (isAuthenticated) {
-                    // Continue with Play Games Services
-                    gpgsSignInStatusTextView.setText("GPGS Sign In Status : Signed In ✅");
-                    gpgsSignInImageView.setVisibility(View.GONE);
-                    /* TODO -> Remove the following code if we do find a way to implement the 'Enable server-side access'
-                               document in the GPGS documentation
-                    PlayGames.getPlayersClient(MainActivity.this).getCurrentPlayer()
-                            .addOnCompleteListener(new OnCompleteListener<Player>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Player> task) {
-                            String playerId = task.getResult().getPlayerId();
-                        }
-                    });
-                    */
-                } else {
-                    // Disable your integration with Play Games Services or show a login button to ask players to sign-in.
-                    // Clicking it should call GamesSignInClient.signIn().
-                    /* Own Notes - As of right now, the default settings for UI (i.e. buttons & text-views etc. related to
-                                   sign-in) and other things is to accommodate the state where is user is not signed in to
-                                   GPGS as default or else we would have not kept this code branch as empty.
-                    */
-                }
+                        isAuthenticatedTask.getResult().isAuthenticated());
+                isUserSignedIn[0] = isAuthenticated;
             }
         });
+        return isUserSignedIn[0];
+    }
+
+    private void verifyPlayGamesSignIn() {
+        if (checkPlayGamesSignIn()) {
+            // Continue with Play Games Services
+            gpgsSignInStatusTextView.setText("GPGS Sign In Status : Signed In ✅");
+            gpgsSignInImageView.setVisibility(View.GONE);
+            /* TODO -> Remove the following code if we do find a way to implement the 'Enable server-side access'
+                       document in the GPGS documentation
+            PlayGames.getPlayersClient(MainActivity.this).getCurrentPlayer()
+                    .addOnCompleteListener(new OnCompleteListener<Player>() {
+                @Override
+                public void onComplete(@NonNull Task<Player> task) {
+                    String playerId = task.getResult().getPlayerId();
+                }
+            });
+            */
+        } else {
+            // Disable your integration with Play Games Services or show a login button to ask players to sign-in.
+            // Clicking it should call GamesSignInClient.signIn().
+            /* Own Notes - As of right now, the default settings for UI (i.e. buttons & text-views etc. related to sign-in)
+                           and other things is to accommodate the state where is user is not signed in to GPGS as default or
+                           else we would have not kept this code branch as empty.
+            */
+        }
     }
 
     @Override
