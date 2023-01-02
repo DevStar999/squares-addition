@@ -40,13 +40,18 @@ import com.google.android.gms.tasks.Task;
         the login rates of the users) for e.g. on the Homepage. We should immediately hide this button when login is
         successful. Optionally, we can also place this button at one more place like the settings page (Remember, it is not
         recommended to put this button buried deep inside the app like the settings page if we are providing this trigger
-        button there only and no place else)
+        button there only and no place else).
         (iv) Best Practise : Whenever we are trying to access a GPGS feature we should verify if the user has signed in so
         as to avoid any unexpected & incorrect behaviour when to run the code for that feature. If we find out that the user
-        is not signed in when we should somehow show this to the user in the UI and give to button to sign in
+        is not signed in when we should somehow show this to the user in the UI and give to button to sign in.
         (v) Decide what needs to be done to the commented out code where we can retrieve the Player ID to identify the user.
         Refer to this link if required (especially the 'Note' boxes related to 'Enable server-side access' etc.) ->
         https://developer.android.com/games/pgs/android/android-signin#get_the_sign-in_result
+    (4) Publishing API (Reference - https://developer.android.com/games/pgs/publishing/publishing) =>
+        (i) Allows us to automate some tasks or functions which can be done manually through the Google Play Console as well.
+        (ii) As of right now, we choose to ignore this API until some need of this comes later.
+    (5) Management API (Reference - https://developer.android.com/games/pgs/management/management) =>
+        (i) As of right now, we choose to ignore this API until some need of this comes later.
 */
 public class MainActivity extends AppCompatActivity implements
         NavigationFragment.OnNavigationFragmentInteractionListener,
