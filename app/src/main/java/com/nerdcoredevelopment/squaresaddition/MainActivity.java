@@ -7,7 +7,6 @@ import android.os.CountDownTimer;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,9 +22,6 @@ import com.google.android.gms.games.GamesSignInClient;
 import com.google.android.gms.games.PlayGames;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /*  Notes related to Google Play Games Services (GPGS)
     (1) Consent Screen (In GCP Project) =>
@@ -51,10 +47,12 @@ import java.util.List;
         (v) Decide what needs to be done to the commented out code where we can retrieve the Player ID to identify the user.
         Refer to this link if required (especially the 'Note' boxes related to 'Enable server-side access' etc.) ->
         https://developer.android.com/games/pgs/android/android-signin#get_the_sign-in_result
-    (4) Publishing API (Reference - https://developer.android.com/games/pgs/publishing/publishing) =>
+    (4) Leaderboards =>
+    (5) Achievements =>
+    (6) Publishing API (Reference - https://developer.android.com/games/pgs/publishing/publishing) =>
         (i) Allows us to automate some tasks or functions which can be done manually through the Google Play Console as well.
         (ii) As of right now, we choose to ignore this API until some need of this comes later.
-    (5) Management API (Reference - https://developer.android.com/games/pgs/management/management) =>
+    (7) Management API (Reference - https://developer.android.com/games/pgs/management/management) =>
         (i) As of right now, we choose to ignore this API until some need of this comes later.
 */
 public class MainActivity extends AppCompatActivity implements
