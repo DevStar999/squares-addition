@@ -7,4 +7,12 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="grey">#808080</color>
+
+    <!-- Current opacity for following color = 40% i.e. in hex = 66 -->
+    <color name="white_translucent_click_effect">#BFFFFFFF</color>
+    <!-- Current opacity for following color = 80% i.e. in hex = CC -->
+    <color name="black_translucent">#CC000000</color>
+    <!-- Current opacity for following color = 40% i.e. in hex = 66 -->
+    <color name="black_dialog_background_translucent">#66000000</color>
 </resources>
