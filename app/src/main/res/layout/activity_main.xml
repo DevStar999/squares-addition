@@ -7,6 +7,22 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <!-- We can use the following button to open up a fragment
+     where we can use it to print whatever useful information
+     that we like -->
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/info_button_main_activity"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:scaleType="fitXY"
+        android:onClick="infoButtonClicked"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/info_icon" />
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/vertical_guide_left_1_main_activity"
         android:layout_width="wrap_content"

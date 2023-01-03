@@ -57,6 +57,7 @@ import com.google.android.gms.tasks.Task;
         (i) As of right now, we choose to ignore this API until some need of this comes later.
 */
 public class MainActivity extends AppCompatActivity implements
+        InfoFragment.OnInfoFragmentInteractionListener,
         NavigationFragment.OnNavigationFragmentInteractionListener,
         GamingZoneFragment.OnGamingZoneFragmentInteractionListener,
         LeaderboardsFragment.OnLeaderboardsFragmentInteractionListener,
@@ -135,6 +136,27 @@ public class MainActivity extends AppCompatActivity implements
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
+    public void infoButtonClicked(View view) {
+        // If InfoFragment was opened and is currently on top, then return
+        int countOfFragments = getSupportFragmentManager().getFragments().size();
+        if (countOfFragments > 0) {
+            Fragment topMostFragment = getSupportFragmentManager().getFragments().get(countOfFragments-1);
+            if (topMostFragment != null && topMostFragment.getTag() != null && !topMostFragment.getTag().isEmpty()
+                    && topMostFragment.getTag().equals("INFO_FRAGMENT")) {
+                return;
+            }
+        }
+
+        InfoFragment fragment = InfoFragment.newInstance("<Add any text you would like to print here>");
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right,
+                R.anim.enter_from_right, R.anim.exit_to_right);
+        transaction.addToBackStack(null);
+        transaction.add(R.id.full_screen_fragment_container_main_activity,
+                fragment, "INFO_FRAGMENT").commit();
+    }
+
     private void setupOnClickListeners() {
         gpgsSignInImageView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -183,6 +205,11 @@ public class MainActivity extends AppCompatActivity implements
                 }
             }
         });
+    }
+
+    @Override
+    public void onInfoFragmentInteractionBackClicked() {
+        onBackPressed();
     }
 
     @Override
