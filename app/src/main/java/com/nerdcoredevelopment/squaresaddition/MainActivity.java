@@ -207,6 +207,8 @@ public class MainActivity extends AppCompatActivity implements
                                    sign-in) and other things is to accommodate the state where is user is not signed in to
                                    GPGS as default or else we would have not kept this code branch as empty.
                     */
+                    gpgsSignInStatusTextView.setText("GPGS Sign In Status : NOT Signed In");
+                    gpgsSignInImageView.setVisibility(View.VISIBLE);
                 }
             }
         });
