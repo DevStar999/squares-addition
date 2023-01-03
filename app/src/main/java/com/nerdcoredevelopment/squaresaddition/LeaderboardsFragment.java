@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.fragment.app.Fragment;
 
@@ -14,6 +15,10 @@ public class LeaderboardsFragment extends Fragment {
     private Context context;
     private OnLeaderboardsFragmentInteractionListener mListener;
     private AppCompatImageView backButton;
+    private AppCompatButton showLeaderboardsButton;
+    private AppCompatButton leaderboardsTop25Button;
+    private AppCompatButton leaderboardsPeer25Button;
+    private AppCompatButton openInfoDialogButton;
 
     public LeaderboardsFragment() {
         // Required empty public constructor
@@ -33,6 +38,38 @@ public class LeaderboardsFragment extends Fragment {
                 }
             }
         });
+        showLeaderboardsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mListener != null) {
+                    mListener.onLeaderboardsFragmentInteractionShowLeaderboardsClicked();
+                }
+            }
+        });
+        leaderboardsTop25Button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mListener != null) {
+                    mListener.onLeaderboardsFragmentInteractionLeaderboardsTop25Clicked();
+                }
+            }
+        });
+        leaderboardsPeer25Button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mListener != null) {
+                    mListener.onLeaderboardsFragmentInteractionLeaderboardsPeer25Clicked();
+                }
+            }
+        });
+        openInfoDialogButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mListener != null) {
+                    mListener.onLeaderboardsFragmentInteractionOpenInfoDialogClicked();
+                }
+            }
+        });
     }
 
     @Override
@@ -48,6 +85,10 @@ public class LeaderboardsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_leaderboards, container, false);
 
         backButton = view.findViewById(R.id.title_back_leaderboards_fragment_button);
+        showLeaderboardsButton = view.findViewById(R.id.show_leaderboards_button);
+        leaderboardsTop25Button = view.findViewById(R.id.leaderboards_top_25_button);
+        leaderboardsPeer25Button = view.findViewById(R.id.leaderboards_peer_25_button);
+        openInfoDialogButton = view.findViewById(R.id.open_info_dialog_button);
 
         settingOnClickListeners();
 
@@ -56,6 +97,10 @@ public class LeaderboardsFragment extends Fragment {
 
     public interface OnLeaderboardsFragmentInteractionListener {
         void onLeaderboardsFragmentInteractionBackClicked();
+        void onLeaderboardsFragmentInteractionShowLeaderboardsClicked();
+        void onLeaderboardsFragmentInteractionLeaderboardsTop25Clicked();
+        void onLeaderboardsFragmentInteractionLeaderboardsPeer25Clicked();
+        void onLeaderboardsFragmentInteractionOpenInfoDialogClicked();
     }
 
     @Override
