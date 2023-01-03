@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity implements
         NavigationFragment.OnNavigationFragmentInteractionListener,
         GamingZoneFragment.OnGamingZoneFragmentInteractionListener,
         LeaderboardsFragment.OnLeaderboardsFragmentInteractionListener,
+        CustomLeaderboardsFragment.OnCustomLeaderboardsFragmentInteractionListener,
         AchievementsFragment.OnAchievementsFragmentInteractionListener,
         SettingsFragment.OnSettingsFragmentInteractionListener {
     private AppCompatTextView gpgsSignInStatusTextView;
@@ -230,7 +231,24 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onNavigationFragmentCustomLeaderboardsClicked() {
-        Toast.makeText(this, "Custom Leaderboards Clicked", Toast.LENGTH_SHORT).show();
+        // If CustomLeaderboardsFragment was opened and is currently on top, then return
+        int countOfFragments = getSupportFragmentManager().getFragments().size();
+        if (countOfFragments > 0) {
+            Fragment topMostFragment = getSupportFragmentManager().getFragments().get(countOfFragments-1);
+            if (topMostFragment != null && topMostFragment.getTag() != null && !topMostFragment.getTag().isEmpty()
+                    && topMostFragment.getTag().equals("CUSTOM_LEADERBOARDS_FRAGMENT")) {
+                return;
+            }
+        }
+
+        CustomLeaderboardsFragment fragment = new CustomLeaderboardsFragment();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right,
+                R.anim.enter_from_right, R.anim.exit_to_right);
+        transaction.addToBackStack(null);
+        transaction.add(R.id.full_screen_fragment_container_main_activity,
+                fragment, "CUSTOM_LEADERBOARDS_FRAGMENT").commit();
     }
 
     @Override
@@ -284,6 +302,11 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onLeaderboardsFragmentInteractionBackClicked() {
+        onBackPressed();
+    }
+
+    @Override
+    public void onCustomLeaderboardsFragmentInteractionBackClicked() {
         onBackPressed();
     }
 
