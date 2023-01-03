@@ -356,13 +356,13 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onLeaderboardsFragmentInteractionLeaderboardsTop25Clicked() {
-        Toast.makeText(this, "Leaderboards - Top 25 Clicked", Toast.LENGTH_SHORT).show();
+    public void onLeaderboardsFragmentInteractionLeaderboardsTopScoresClicked() {
+        Toast.makeText(this, "Leaderboards - Top 5 Clicked", Toast.LENGTH_SHORT).show();
     }
 
     @Override
-    public void onLeaderboardsFragmentInteractionLeaderboardsPeer25Clicked() {
-        Toast.makeText(this, "Leaderboards - Peer 25 Clicked", Toast.LENGTH_SHORT).show();
+    public void onLeaderboardsFragmentInteractionLeaderboardsPeerScoresClicked() {
+        Toast.makeText(this, "Leaderboards - Peer 5 Clicked", Toast.LENGTH_SHORT).show();
     }
 
     @Override

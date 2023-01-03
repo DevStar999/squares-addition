@@ -71,26 +71,26 @@
             android:textStyle="bold" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/leaderboards_top_25_button"
+            android:id="@+id/leaderboards_top_scores_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/click_button"
             android:paddingVertical="16dp"
             android:paddingHorizontal="24dp"
-            android:text="LEADERBOARDS - TOP 25"
+            android:text="LEADERBOARDS - TOP 5"
             android:textAlignment="center"
             android:textColor="@color/black"
             android:textSize="14sp"
             android:textStyle="bold" />
 
         <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/leaderboards_peer_25_button"
+            android:id="@+id/leaderboards_peer_scores_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/click_button"
             android:paddingVertical="16dp"
             android:paddingHorizontal="24dp"
-            android:text="LEADERBOARDS - PEER 25"
+            android:text="LEADERBOARDS - PEER 5"
             android:textAlignment="center"
             android:textColor="@color/black"
             android:textSize="14sp"

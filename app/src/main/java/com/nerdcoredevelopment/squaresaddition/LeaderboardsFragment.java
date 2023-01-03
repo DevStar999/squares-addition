@@ -16,8 +16,8 @@ public class LeaderboardsFragment extends Fragment {
     private OnLeaderboardsFragmentInteractionListener mListener;
     private AppCompatImageView backButton;
     private AppCompatButton showLeaderboardsButton;
-    private AppCompatButton leaderboardsTop25Button;
-    private AppCompatButton leaderboardsPeer25Button;
+    private AppCompatButton leaderboardsTopScoresButton;
+    private AppCompatButton leaderboardsPeerScoresButton;
     private AppCompatButton openInfoDialogButton;
 
     public LeaderboardsFragment() {
@@ -46,19 +46,19 @@ public class LeaderboardsFragment extends Fragment {
                 }
             }
         });
-        leaderboardsTop25Button.setOnClickListener(new View.OnClickListener() {
+        leaderboardsTopScoresButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (mListener != null) {
-                    mListener.onLeaderboardsFragmentInteractionLeaderboardsTop25Clicked();
+                    mListener.onLeaderboardsFragmentInteractionLeaderboardsTopScoresClicked();
                 }
             }
         });
-        leaderboardsPeer25Button.setOnClickListener(new View.OnClickListener() {
+        leaderboardsPeerScoresButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (mListener != null) {
-                    mListener.onLeaderboardsFragmentInteractionLeaderboardsPeer25Clicked();
+                    mListener.onLeaderboardsFragmentInteractionLeaderboardsPeerScoresClicked();
                 }
             }
         });
@@ -86,8 +86,8 @@ public class LeaderboardsFragment extends Fragment {
 
         backButton = view.findViewById(R.id.title_back_leaderboards_fragment_button);
         showLeaderboardsButton = view.findViewById(R.id.show_leaderboards_button);
-        leaderboardsTop25Button = view.findViewById(R.id.leaderboards_top_25_button);
-        leaderboardsPeer25Button = view.findViewById(R.id.leaderboards_peer_25_button);
+        leaderboardsTopScoresButton = view.findViewById(R.id.leaderboards_top_scores_button);
+        leaderboardsPeerScoresButton = view.findViewById(R.id.leaderboards_peer_scores_button);
         openInfoDialogButton = view.findViewById(R.id.open_info_dialog_button);
 
         settingOnClickListeners();
@@ -98,8 +98,8 @@ public class LeaderboardsFragment extends Fragment {
     public interface OnLeaderboardsFragmentInteractionListener {
         void onLeaderboardsFragmentInteractionBackClicked();
         void onLeaderboardsFragmentInteractionShowLeaderboardsClicked();
-        void onLeaderboardsFragmentInteractionLeaderboardsTop25Clicked();
-        void onLeaderboardsFragmentInteractionLeaderboardsPeer25Clicked();
+        void onLeaderboardsFragmentInteractionLeaderboardsTopScoresClicked();
+        void onLeaderboardsFragmentInteractionLeaderboardsPeerScoresClicked();
         void onLeaderboardsFragmentInteractionOpenInfoDialogClicked();
     }
 
