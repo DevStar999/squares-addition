@@ -333,6 +333,11 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void onGamingZoneFragmentInteractionSubmitHighScore(int newHighScore) {
+        leaderboardsClient.submitScore(getString(R.string.leaderboard_final_score_leaderboard), newHighScore);
+    }
+
+    @Override
     public void onLeaderboardsFragmentInteractionBackClicked() {
         onBackPressed();
     }

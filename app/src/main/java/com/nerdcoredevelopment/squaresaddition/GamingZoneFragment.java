@@ -130,6 +130,9 @@ public class GamingZoneFragment extends Fragment {
                     if (finalScore > Integer.parseInt(bestScoreTextView.getText().toString())) {
                         sharedPreferences.edit().putInt("bestScore", finalScore).apply();
                         bestScoreTextView.setText(String.valueOf(finalScore));
+                        if (mListener != null) {
+                            mListener.onGamingZoneFragmentInteractionSubmitHighScore(finalScore);
+                        }
                     }
                     actionButton.setText("RESET GAME \uD83D\uDD04️");
                 } else { // Reset the game to begin fresh
@@ -179,6 +182,7 @@ public class GamingZoneFragment extends Fragment {
 
     public interface OnGamingZoneFragmentInteractionListener {
         void onGamingZoneFragmentInteractionBackClicked();
+        void onGamingZoneFragmentInteractionSubmitHighScore(int newHighScore);
     }
 
     @Override
