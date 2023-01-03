@@ -1,5 +1,6 @@
 package com.nerdcoredevelopment.squaresaddition;
 
+import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import androidx.fragment.app.Fragment;
 public class NavigationFragment extends Fragment {
     private AppCompatTextView gamingZoneTextView;
     private AppCompatTextView leaderboardsTextView;
+    private AppCompatTextView customLeaderboardsTextView;
     private AppCompatTextView achievementsTextView;
     private AppCompatTextView settingsTextView;
     private OnNavigationFragmentInteractionListener mListener;
@@ -28,6 +30,7 @@ public class NavigationFragment extends Fragment {
     private void initialise(View layoutView) {
         gamingZoneTextView = layoutView.findViewById(R.id.gaming_zone_text_view_navigation_fragment);
         leaderboardsTextView = layoutView.findViewById(R.id.leaderboards_text_view_navigation_fragment);
+        customLeaderboardsTextView = layoutView.findViewById(R.id.custom_leaderboards_text_view_navigation_fragment);
         achievementsTextView = layoutView.findViewById(R.id.achievements_text_view_navigation_fragment);
         settingsTextView = layoutView.findViewById(R.id.settings_text_view_navigation_fragment);
     }
@@ -46,6 +49,14 @@ public class NavigationFragment extends Fragment {
             public void onClick(View view) {
                 if (mListener != null) {
                     mListener.onNavigationFragmentLeaderboardsClicked();
+                }
+            }
+        });
+        customLeaderboardsTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mListener != null) {
+                    mListener.onNavigationFragmentCustomLeaderboardsClicked();
                 }
             }
         });
@@ -89,6 +100,7 @@ public class NavigationFragment extends Fragment {
     public interface OnNavigationFragmentInteractionListener {
         void onNavigationFragmentGamingZoneClicked();
         void onNavigationFragmentLeaderboardsClicked();
+        void onNavigationFragmentCustomLeaderboardsClicked();
         void onNavigationFragmentAchievementsClicked();
         void onNavigationFragmentSettingsClicked();
     }
