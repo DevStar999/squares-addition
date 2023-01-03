@@ -1,6 +1,7 @@
 package com.nerdcoredevelopment.squaresaddition;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -20,6 +21,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.games.AuthenticationResult;
 import com.google.android.gms.games.GamesSignInClient;
+import com.google.android.gms.games.LeaderboardsClient;
 import com.google.android.gms.games.PlayGames;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -64,14 +66,17 @@ public class MainActivity extends AppCompatActivity implements
         CustomLeaderboardsFragment.OnCustomLeaderboardsFragmentInteractionListener,
         AchievementsFragment.OnAchievementsFragmentInteractionListener,
         SettingsFragment.OnSettingsFragmentInteractionListener {
+    public static final int RC_LEADERBOARD_UI = 9004;
     private AppCompatTextView gpgsSignInStatusTextView;
     private AppCompatImageView gpgsSignInImageView;
     private GamesSignInClient gamesSignInClient;
+    private LeaderboardsClient leaderboardsClient;
 
     private void initialise() {
         gpgsSignInStatusTextView = findViewById(R.id.gpgs_sign_in_status_text_view);
         gpgsSignInImageView = findViewById(R.id.gpgs_sign_in_image_view);
         gamesSignInClient = PlayGames.getGamesSignInClient(MainActivity.this);
+        leaderboardsClient = PlayGames.getLeaderboardsClient(MainActivity.this);
     }
 
     @SuppressLint("SourceLockedOrientationActivity")
@@ -334,7 +339,13 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onLeaderboardsFragmentInteractionShowLeaderboardsClicked() {
-        Toast.makeText(this, "Show Leaderboards Clicked", Toast.LENGTH_SHORT).show();
+        leaderboardsClient.getLeaderboardIntent(getString(R.string.leaderboard_final_score_leaderboard))
+            .addOnCompleteListener(new OnCompleteListener<Intent>() {
+                @Override
+                public void onComplete(@NonNull Task<Intent> task) {
+                    startActivityForResult(task.getResult(), RC_LEADERBOARD_UI);
+                }
+            });
     }
 
     @Override

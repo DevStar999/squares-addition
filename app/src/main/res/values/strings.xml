@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Squares Addition</string>
+    <!--game_services_project_id-->
     <string translatable="false"  name="game_services_project_id">47423839227</string>
+    <!--package_name-->
+    <string name="package_name" translatable="false">com.nerdcoredevelopment.squaresaddition</string>
+    <!--leaderboard FINAL_SCORE_LEADERBOARD-->
+    <string name="leaderboard_final_score_leaderboard" translatable="false">CgkI-7e51bABEAIQAg</string>
 </resources>
