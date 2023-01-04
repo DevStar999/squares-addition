@@ -51,12 +51,56 @@ import com.google.android.gms.tasks.Task;
         Refer to this link if required (especially the 'Note' boxes related to 'Enable server-side access' etc.) ->
         https://developer.android.com/games/pgs/android/android-signin#get_the_sign-in_result
     (4) Leaderboards =>
+        (i) When we use the submitScore() method to submit our score to the leaderboard GPGS will by itself check if the
+        submitted score is better than the current entry in the daily, weekly & all-time score list. If it is, GPGS will
+        update the corresponding leaderboard.
+        (ii) The methods to retrieve a player's scores from GPGS are also very well written keeping in mind all the
+        possibilities.
+        TODO -> Add the specific method i.e. the code to retrieve a player's score
+        (iii) We can have a maximum of 70 leaderboards for a game.
+        (iv) The Play Games SDK automatically creates daily, weekly, and all-time versions of every leaderboard that you
+        create. There's no need for us to create separate leaderboards for each time frame.
+        (v) Public and Social Leaderboards : Social leaderboards consist of entries of the user's friends as per Google Play
+        Games i.e. the scores from these friends and ranking is also given as per what the ranking is among these friends.
+        Public leaderboards consist of entries of all the players who have chosen to share their gameplay activity to
+        everyone in the Google Play Games settings i.e. their scores will be visible and a part of this leaderboard.
+        (vi) Before showing the leaderboard to the user, we will have to check first if the user has an entry on the
+        leaderboard. If not, then we will have to prompt the user to change the settings for his account in Google Play
+        Games. Not only will we have to check if the current player's score has been submitted to the leaderboard but also
+        check if the player is currently signed in or not or the methods used to retrieve the leaderboards data may not
+        function properly.
+        (vii) When we show the leaderboards using a custom UI, then we should take care of the fact that the player Id may
+        contain Unicode characters (for example, if the name has non-english characters).
+        (viii) All scores are submitted to leaderboards and stored internally as long integers, the Games service can present
+        them to the user in a number of different formats: (1) Numeric (2) Time (3) Currency. We may need to revisit this
+        section for info on submitting scores if we are doing something new.
+        (ix) Editing a leaderboard : Mainly consists of 3 functions which are as follows ->
+        (a) Undo an edit (b) Delete a leaderboard (c) Reset a leaderboard
+        For more information we can refer to the link ->
+        https://developers.google.com/games/services/common/concepts/leaderboards#edit_a_leaderboard
+        (x) Add translations for leaderboards : Refer to the following link ->
+        https://developers.google.com/games/services/common/concepts/leaderboards#add_translations_for_leaderboards
+        (xi) Hide leaderboard scores : Basically talks about the 'Leaderboard tamper Protection' feature where the
+        suspected tampered scores are hidden automatically in the leaderboard. For more info. refer to the link ->
+        https://developers.google.com/games/services/common/concepts/leaderboards#hide_leaderboard_scores
     (5) Achievements =>
     (6) Publishing API (Reference - https://developer.android.com/games/pgs/publishing/publishing) =>
         (i) Allows us to automate some tasks or functions which can be done manually through the Google Play Console as well.
         (ii) As of right now, we choose to ignore this API until some need of this comes later.
     (7) Management API (Reference - https://developer.android.com/games/pgs/management/management) =>
         (i) As of right now, we choose to ignore this API until some need of this comes later.
+    (8) Things that cannot be changed after they are published =>
+        (i) Saved games -> In 'Edit properties' in 'Configuration -> Can't be turned off after publishing if 'On' is ticked
+        and game is published
+        (ii) Incremental achievements -> In 'Achievements' in a specific achievement -> This can't be changed after the
+        achievement is published
+        (iii) Initial state -> (a) In 'Achievements' in a specific achievement & (b) In 'Events' in a specific
+        event -> This can't be changed after the achievement is published
+        (iv) Points -> In 'Achievements' -> These are XP Points for a Google Play Games player which are added after
+        unlocking an achievement to their total profile experience and per one achievement max. of 200 points can be given
+        and for the whole game among all achievements a max. of 1000 points can be given
+        (v) Limits -> In 'Leaderboards' in a specific leaderboard -> This is the upper limit and/or lower limit for score in
+        a leaderboard
 */
 public class MainActivity extends AppCompatActivity implements
         InfoFragment.OnInfoFragmentInteractionListener,
