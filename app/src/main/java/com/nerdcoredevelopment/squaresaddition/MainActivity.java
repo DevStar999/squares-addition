@@ -102,6 +102,11 @@ import com.google.android.gms.tasks.Task;
         (v) Limits -> In 'Leaderboards' in a specific leaderboard -> This is the upper limit and/or lower limit for score in
         a leaderboard
 */
+// The list of TODOs related to this project is as follows
+/* TODO -> Verify all the GPGS features are working correctly and proper error handling is done for the following -
+           (a) When user is not signed-in
+           (b) No internet connection
+*/
 public class MainActivity extends AppCompatActivity implements
         InfoFragment.OnInfoFragmentInteractionListener,
         NavigationFragment.OnNavigationFragmentInteractionListener,
