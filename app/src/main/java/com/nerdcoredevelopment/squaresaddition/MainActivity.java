@@ -1,7 +1,9 @@
 package com.nerdcoredevelopment.squaresaddition;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -106,6 +108,13 @@ import com.google.android.gms.tasks.Task;
 /* TODO -> Verify all the GPGS features are working correctly and proper error handling is done for the following -
            (a) When user is not signed-in
            (b) No internet connection
+           or any combination of the above two
+*/
+/* TODO -> The GPGS feature of 'Achievements' is to be implemented in the next visit to this feature with the following
+           tasks to be kept in mind -
+           (a) Understanding the concept (Refer) -> https://developers.google.com/games/services/common/concepts/achievements
+           (b) Client Implementation (Refer) -> https://developers.google.com/games/services/android/achievements
+           (c) Take a look at the Quality checklist (Refer) -> https://developers.google.com/games/services/checklist
 */
 public class MainActivity extends AppCompatActivity implements
         InfoFragment.OnInfoFragmentInteractionListener,
@@ -116,12 +125,14 @@ public class MainActivity extends AppCompatActivity implements
         AchievementsFragment.OnAchievementsFragmentInteractionListener,
         SettingsFragment.OnSettingsFragmentInteractionListener {
     public static final int RC_LEADERBOARD_UI = 9004;
+    private SharedPreferences sharedPreferences;
     private AppCompatTextView gpgsSignInStatusTextView;
     private AppCompatImageView gpgsSignInImageView;
     private GamesSignInClient gamesSignInClient;
     private LeaderboardsClient leaderboardsClient;
 
     private void initialise() {
+        sharedPreferences = getSharedPreferences("com.nerdcoredevelopment.squaresaddition", Context.MODE_PRIVATE);
         gpgsSignInStatusTextView = findViewById(R.id.gpgs_sign_in_status_text_view);
         gpgsSignInImageView = findViewById(R.id.gpgs_sign_in_image_view);
         gamesSignInClient = PlayGames.getGamesSignInClient(MainActivity.this);
@@ -280,7 +291,8 @@ public class MainActivity extends AppCompatActivity implements
             }
         }
 
-        GamingZoneFragment fragment = new GamingZoneFragment();
+        int bestScoreForSignedInPlayerFromGPGS = sharedPreferences.getInt("bestScore", 0);
+        GamingZoneFragment fragment = GamingZoneFragment.newInstance(bestScoreForSignedInPlayerFromGPGS);
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right,
