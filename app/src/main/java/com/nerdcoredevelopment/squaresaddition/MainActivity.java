@@ -337,6 +337,10 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void onGamingZoneFragmentInteractionSubmitHighScore(int newHighScore) {
         leaderboardsClient.submitScore(getString(R.string.leaderboard_final_score_leaderboard), newHighScore);
+        /*  The method with following signature can be used if we want to send some more data along with the score in the
+            form of a tag. For our e.g. "Score Tag"
+        */
+        // leaderboardsClient.submitScore(getString(R.string.leaderboard_final_score_leaderboard), newHighScore, "Score Tag");
     }
 
     @Override
