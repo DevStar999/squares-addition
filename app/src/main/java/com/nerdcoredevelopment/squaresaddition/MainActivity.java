@@ -97,7 +97,20 @@ import com.google.android.gms.tasks.Task;
             Rank (without ordinals, simple long integer) = LeaderboardScore.getRank() = (long) 9
         (c) Score = LeaderboardScore.getRawScore() = (long) 47
         (d) Avatar Image = Refer from images of object info in Google Drive folder for this app
-        (xiii) Notes related to the methods of a important classes the related to the Leaderboards feature are as follows
+        (xiii) Notes related to the methods of a important classes the related to the Leaderboards feature are as follows -
+        (a) LeaderboardsClient : Refer to this link to check out all the methods of this class ->
+        https://developers.google.com/android/reference/com/google/android/gms/games/LeaderboardsClient
+        However, all the relevant methods for our use have been tested out which are namely getLeaderboardIntent(),
+        loadCurrentPlayerLeaderboardScore(), loadPlayerCenteredScores(), loadTopScores() & submitScore()
+        (b) LeaderboardsClient.LeaderboardScores : Refer to this link to check out all the methods of this class ->
+        https://developers.google.com/android/reference/com/google/android/gms/games/LeaderboardsClient.LeaderboardScores
+        However, the only relevant method of this class is getScores() method
+        (c) LeaderboardScoreBuffer : The only method this class consists which also happens to be relevant for us is the
+        get() method which returns a LeaderboardScore object and this method should be used as shown in the code below
+        (xiv) Sample data in the objects of important classes related to the leaderboards feature can be found in text files
+        in Google Drive. The classes namely are as follows ->
+        (a) LeaderboardScore (b) Player (c) CurrentPlayerInfo
+        (d) PlayerLevelInfo (e) PlayerRelationshipInfo (f) PlayerLevel
     (5) Achievements =>
     (6) Publishing API (Reference - https://developer.android.com/games/pgs/publishing/publishing) =>
         (i) Allows us to automate some tasks or functions which can be done manually through the Google Play Console as well.
