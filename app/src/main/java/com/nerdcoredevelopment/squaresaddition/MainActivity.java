@@ -64,8 +64,7 @@ import com.google.android.gms.tasks.Task;
         submitted score is better than the current entry in the daily, weekly & all-time score list. If it is, GPGS will
         update the corresponding leaderboard.
         (ii) The methods to retrieve a player's scores from GPGS are also very well written keeping in mind all the
-        possibilities.
-        TODO -> Add the specific method i.e. the code to retrieve a player's score
+        possibilities. The code for this can be found in this MainActivity.java file
         (iii) We can have a maximum of 70 leaderboards for a game.
         (iv) The Play Games SDK automatically creates daily, weekly, and all-time versions of every leaderboard that you
         create. There's no need for us to create separate leaderboards for each time frame.
@@ -98,6 +97,7 @@ import com.google.android.gms.tasks.Task;
             Rank (without ordinals, simple long integer) = LeaderboardScore.getRank() = (long) 9
         (c) Score = LeaderboardScore.getRawScore() = (long) 47
         (d) Avatar Image = Refer from images of object info in Google Drive folder for this app
+        (xiii) Notes related to the methods of a important classes the related to the Leaderboards feature are as follows
     (5) Achievements =>
     (6) Publishing API (Reference - https://developer.android.com/games/pgs/publishing/publishing) =>
         (i) Allows us to automate some tasks or functions which can be done manually through the Google Play Console as well.
@@ -142,6 +142,7 @@ public class MainActivity extends AppCompatActivity implements
     private AppCompatTextView gpgsSignInStatusTextView;
     private AppCompatImageView gpgsSignInImageView;
     private GamesSignInClient gamesSignInClient;
+    private boolean isUserSignedIn;
     private LeaderboardsClient leaderboardsClient;
 
     private void initialise() {
@@ -149,6 +150,7 @@ public class MainActivity extends AppCompatActivity implements
         gpgsSignInStatusTextView = findViewById(R.id.gpgs_sign_in_status_text_view);
         gpgsSignInImageView = findViewById(R.id.gpgs_sign_in_image_view);
         gamesSignInClient = PlayGames.getGamesSignInClient(MainActivity.this);
+        isUserSignedIn = false;
         leaderboardsClient = PlayGames.getLeaderboardsClient(MainActivity.this);
     }
 
@@ -263,6 +265,7 @@ public class MainActivity extends AppCompatActivity implements
                     // Continue with Play Games Services
                     gpgsSignInStatusTextView.setText("Google Play Games Sign In Status : Signed In ✅");
                     gpgsSignInImageView.setVisibility(View.GONE);
+                    isUserSignedIn = true;
                     /* TODO -> Remove the following code if we do find a way to implement the 'Enable server-side access'
                                document in the GPGS documentation
                     PlayGames.getPlayersClient(MainActivity.this).getCurrentPlayer()
@@ -282,6 +285,7 @@ public class MainActivity extends AppCompatActivity implements
                     */
                     gpgsSignInStatusTextView.setText("Google Play Games Sign In Status : NOT Signed In");
                     gpgsSignInImageView.setVisibility(View.VISIBLE);
+                    isUserSignedIn = false;
                 }
             }
         });
@@ -523,6 +527,11 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onLeaderboardsFragmentInteractionShowLeaderboardsClicked() {
+        if (!isUserSignedIn) {
+            Toast.makeText(MainActivity.this, "This feature cannot be used unless you are signed in",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
         leaderboardsClient.getLeaderboardIntent(getString(R.string.leaderboard_final_score_leaderboard))
             .addOnCompleteListener(new OnCompleteListener<Intent>() {
                 @Override
