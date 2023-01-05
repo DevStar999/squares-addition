@@ -3,6 +3,7 @@ package com.nerdcoredevelopment.squaresaddition;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ public class GamingZoneFragment extends Fragment {
     private OnGamingZoneFragmentInteractionListener mListener;
     private SharedPreferences sharedPreferences;
     private AppCompatImageView backButton;
+    private int totalGamesPlayed;
     private boolean isFinalScoreCalculated;
     private long bestScore;
     private AppCompatTextView bestScoreTextView;
@@ -64,6 +66,7 @@ public class GamingZoneFragment extends Fragment {
 
     private void initialiseViews(View layoutView) {
         backButton = layoutView.findViewById(R.id.title_back_gaming_zone_fragment_button);
+        totalGamesPlayed = sharedPreferences.getInt("totalGamesPlayed", 0);
         sharedPreferences.edit().putLong("bestScore", bestScore).apply();
         bestScoreTextView = layoutView.findViewById(R.id.best_score_value_text_view);
         bestScoreTextView.setText(String.valueOf(bestScore));
@@ -130,6 +133,8 @@ public class GamingZoneFragment extends Fragment {
                     int finalScore = (enteredFirstNumber * enteredFirstNumber) +
                             (enteredSecondNumber * enteredSecondNumber) + mysteryBonus;
 
+                    totalGamesPlayed++;
+                    sharedPreferences.edit().putInt("totalGamesPlayed", totalGamesPlayed).apply();
                     firstNumberTextInputLayout.setEnabled(false);
                     secondNumberTextInputLayout.setEnabled(false);
                     mysteryBonusTextView.setText(String.valueOf(mysteryBonus));
