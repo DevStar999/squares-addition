@@ -562,10 +562,10 @@ public class MainActivity extends AppCompatActivity implements
                         Log.i("Custom Debugging", "The data of leaderboardScoreBuffer for " +
                                 "leaderboardsClient.loadTopScores() is as follows ->");
                         for (int i = 0; i < count; i++) {
-                            LeaderboardScore score = leaderboardScoreBuffer.get(i);
-                            String displayName = score.getScoreHolderDisplayName();
-                            String displayRank = score.getDisplayRank();
-                            long rawScoreValue = score.getRawScore();
+                            LeaderboardScore leaderboardScore = leaderboardScoreBuffer.get(i);
+                            String displayName = leaderboardScore.getScoreHolderDisplayName();
+                            String displayRank = leaderboardScore.getDisplayRank();
+                            long rawScoreValue = leaderboardScore.getRawScore();
                             Log.i("Custom Debugging", "for i = " + i + ":\n" + "displayName = " + displayName
                                     + ", displayRank = " + displayRank + ", rawScoreValue = " + rawScoreValue);
                         }
@@ -611,10 +611,10 @@ public class MainActivity extends AppCompatActivity implements
                         Log.i("Custom Debugging", "The data of leaderboardScoreBuffer for " +
                                 "leaderboardsClient.loadPlayerCenteredScores() is as follows ->");
                         for (int i = 0; i < count; i++) {
-                            LeaderboardScore score = leaderboardScoreBuffer.get(i);
-                            String displayName = score.getScoreHolderDisplayName();
-                            String displayRank = score.getDisplayRank();
-                            long rawScoreValue = score.getRawScore();
+                            LeaderboardScore leaderboardScore = leaderboardScoreBuffer.get(i);
+                            String displayName = leaderboardScore.getScoreHolderDisplayName();
+                            String displayRank = leaderboardScore.getDisplayRank();
+                            long rawScoreValue = leaderboardScore.getRawScore();
                             Log.i("Custom Debugging", "for i = " + i + ":\n" + "displayName = " + displayName
                                     + ", displayRank = " + displayRank + ", rawScoreValue = " + rawScoreValue);
                         }
