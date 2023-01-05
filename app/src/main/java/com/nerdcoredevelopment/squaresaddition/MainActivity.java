@@ -665,6 +665,11 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void onAchievementsFragmentInteractionShowAchievementsClicked() {
+        Toast.makeText(MainActivity.this, "Show Achievements Clicked", Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
     public void onSettingsFragmentInteractionBackClicked() {
         onBackPressed();
     }

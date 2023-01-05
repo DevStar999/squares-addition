@@ -66,7 +66,7 @@
             android:layout_height="wrap_content"
             android:padding="8dp"
             android:background="@drawable/click_navigation_button"
-            android:visibility="gone"
+            android:visibility="visible"
             android:text="ACHIEVEMENTS"
             android:textAlignment="center"
             android:textColor="@color/black"

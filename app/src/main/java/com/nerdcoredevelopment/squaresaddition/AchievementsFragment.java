@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.fragment.app.Fragment;
 
@@ -14,6 +15,7 @@ public class AchievementsFragment extends Fragment {
     private Context context;
     private OnAchievementsFragmentInteractionListener mListener;
     private AppCompatImageView backButton;
+    private AppCompatButton showAchievementsButton;
 
     public AchievementsFragment() {
         // Required empty public constructor
@@ -33,6 +35,14 @@ public class AchievementsFragment extends Fragment {
                 }
             }
         });
+        showAchievementsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mListener != null) {
+                    mListener.onAchievementsFragmentInteractionShowAchievementsClicked();
+                }
+            }
+        });
     }
 
     @Override
@@ -48,6 +58,7 @@ public class AchievementsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_achievements, container, false);
 
         backButton = view.findViewById(R.id.title_back_achievements_fragment_button);
+        showAchievementsButton = view.findViewById(R.id.show_achievements_button);
 
         settingOnClickListeners();
 
@@ -56,6 +67,7 @@ public class AchievementsFragment extends Fragment {
 
     public interface OnAchievementsFragmentInteractionListener {
         void onAchievementsFragmentInteractionBackClicked();
+        void onAchievementsFragmentInteractionShowAchievementsClicked();
     }
 
     @Override
