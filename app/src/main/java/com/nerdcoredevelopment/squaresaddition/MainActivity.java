@@ -261,7 +261,7 @@ public class MainActivity extends AppCompatActivity implements
                         && isAuthenticatedTask.getResult().isAuthenticated());
                 if (isAuthenticated) {
                     // Continue with Play Games Services
-                    gpgsSignInStatusTextView.setText("GPGS Sign In Status : Signed In ✅");
+                    gpgsSignInStatusTextView.setText("Google Play Games Sign In Status : Signed In ✅");
                     gpgsSignInImageView.setVisibility(View.GONE);
                     /* TODO -> Remove the following code if we do find a way to implement the 'Enable server-side access'
                                document in the GPGS documentation
@@ -280,7 +280,7 @@ public class MainActivity extends AppCompatActivity implements
                                    sign-in) and other things is to accommodate the state where is user is not signed in to
                                    GPGS as default or else we would have not kept this code branch as empty.
                     */
-                    gpgsSignInStatusTextView.setText("GPGS Sign In Status : NOT Signed In");
+                    gpgsSignInStatusTextView.setText("Google Play Games Sign In Status : NOT Signed In");
                     gpgsSignInImageView.setVisibility(View.VISIBLE);
                 }
             }
