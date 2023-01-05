@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -21,11 +22,17 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.android.gms.games.AnnotatedData;
 import com.google.android.gms.games.AuthenticationResult;
 import com.google.android.gms.games.GamesSignInClient;
 import com.google.android.gms.games.LeaderboardsClient;
 import com.google.android.gms.games.PlayGames;
+import com.google.android.gms.games.leaderboard.LeaderboardScore;
+import com.google.android.gms.games.leaderboard.LeaderboardScoreBuffer;
+import com.google.android.gms.games.leaderboard.LeaderboardVariant;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 /*  Notes related to Google Play Games Services (GPGS)
@@ -85,6 +92,12 @@ import com.google.android.gms.tasks.Task;
         (xi) Hide leaderboard scores : Basically talks about the 'Leaderboard tamper Protection' feature where the
         suspected tampered scores are hidden automatically in the leaderboard. For more info. refer to the link ->
         https://developers.google.com/games/services/common/concepts/leaderboards#hide_leaderboard_scores
+        (xii) For each line of Custom UI we should have the following data (with examples) ->
+        (a) Gamer name/Display name/User Id = LeaderboardScore.getScoreHolderDisplayName() = (String) HokageMeetPatel1997
+        (b) Rank (with ordinals like 1st, 22nd, 43rd, 5th etc.) = LeaderboardScore.getDisplayRank() = (String) 9th
+            Rank (without ordinals, simple long integer) = LeaderboardScore.getRank() = (long) 9
+        (c) Score = LeaderboardScore.getRawScore() = (long) 47
+        (d) Avatar Image = Refer from images of object info in Google Drive folder for this app
     (5) Achievements =>
     (6) Publishing API (Reference - https://developer.android.com/games/pgs/publishing/publishing) =>
         (i) Allows us to automate some tasks or functions which can be done manually through the Google Play Console as well.
@@ -279,6 +292,17 @@ public class MainActivity extends AppCompatActivity implements
         onBackPressed();
     }
 
+    private void openGamingZoneFragment(long bestScore) {
+        GamingZoneFragment fragment = GamingZoneFragment.newInstance(bestScore);
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right,
+                R.anim.enter_from_right, R.anim.exit_to_right);
+        transaction.addToBackStack(null);
+        transaction.add(R.id.full_screen_fragment_container_main_activity,
+                fragment, "GAMING_ZONE_FRAGMENT").commit();
+    }
+
     @Override
     public void onNavigationFragmentGamingZoneClicked() {
         // If GamingZoneFragment was opened and is currently on top, then return
@@ -291,15 +315,103 @@ public class MainActivity extends AppCompatActivity implements
             }
         }
 
-        int bestScoreForSignedInPlayerFromGPGS = sharedPreferences.getInt("bestScore", 0);
-        GamingZoneFragment fragment = GamingZoneFragment.newInstance(bestScoreForSignedInPlayerFromGPGS);
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.setCustomAnimations(R.anim.enter_from_right, R.anim.exit_to_right,
-                R.anim.enter_from_right, R.anim.exit_to_right);
-        transaction.addToBackStack(null);
-        transaction.add(R.id.full_screen_fragment_container_main_activity,
-                fragment, "GAMING_ZONE_FRAGMENT").commit();
+        final long[] bestScoreForSignedInPlayerFromGPGS = {sharedPreferences.getLong("bestScore", 0)};
+        /* Note - (a) In the following lines of code we are retrieve the currently signed in player's score from the
+                  Leaderboards data using the method loadCurrentPlayerLeaderboardScore() along with addOnSuccessListener()
+                  & addOnFailureListener() listeners
+                  (b) Another way to implement the retrieval of score can be with the same method but with the
+                  addOnCompleteListener() listener. This is shown in the commented out code below
+                  (c) Refer images on Google Drive in this app's folder to see the log data
+        */
+        leaderboardsClient.loadCurrentPlayerLeaderboardScore(getString(R.string.leaderboard_final_score_leaderboard),
+            LeaderboardVariant.TIME_SPAN_ALL_TIME, LeaderboardVariant.COLLECTION_PUBLIC)
+            .addOnSuccessListener(new OnSuccessListener<AnnotatedData<LeaderboardScore>>() {
+                @Override
+                public void onSuccess(AnnotatedData<LeaderboardScore> leaderboardScoreAnnotatedData) {
+                    LeaderboardScore leaderboardScore = leaderboardScoreAnnotatedData.get();
+                    if (leaderboardScore != null) {
+                        long rawScore = leaderboardScore.getRawScore();
+                        String displayRank = leaderboardScore.getDisplayRank();
+                        long rank = leaderboardScore.getRank();
+                        String playerDisplayName = leaderboardScore.getScoreHolderDisplayName();
+
+                        Log.i("Custom Debugging", "In addOnCompleteListener, " +
+                                "LeaderboardScore.getRawScore() = (long) " + rawScore);
+                        Log.i("Custom Debugging", "In addOnCompleteListener, " +
+                                "LeaderboardScore.getDisplayRank() = (String) " + displayRank);
+                        Log.i("Custom Debugging", "In addOnCompleteListener, " +
+                                "LeaderboardScore.getRank() = (long) " + rank);
+                        Log.i("Custom Debugging", "In addOnCompleteListener, " +
+                                "LeaderboardScore.getScoreHolderDisplayName() = (String) " + playerDisplayName);
+                        bestScoreForSignedInPlayerFromGPGS[0] = rawScore;
+                    } else {
+                        // TODO -> This too is an error branch and we should handle this as mentioned in the TODO below
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.i("Custom Debugging", "onFailure: Failed to fetch GPGS score by " +
+                            "LeaderboardsClient.loadCurrentPlayerLeaderboardScore() method");
+                    /* TODO -> We should remove the log statement above as it is just for our understanding and handle this
+                               error branch with something like a dialog which gives a similar message to the above
+                               log statement
+                    */
+                }
+            });
+        /*
+        leaderboardsClient.loadCurrentPlayerLeaderboardScore(getString(R.string.leaderboard_final_score_leaderboard),
+            LeaderboardVariant.TIME_SPAN_ALL_TIME, LeaderboardVariant.COLLECTION_PUBLIC)
+            .addOnCompleteListener(new OnCompleteListener<AnnotatedData<LeaderboardScore>>() {
+                @Override
+                public void onComplete(@NonNull Task<AnnotatedData<LeaderboardScore>> task) {
+                    if (!task.isSuccessful()) {
+                        Log.i("Custom Debugging", "Failed to complete task of fetching score");
+                        // TODO -> This too is an error branch and we should handle this as mentioned in the TODO above
+                    }
+
+                    if (task.getResult() != null) {
+                        LeaderboardScore leaderboardScore = task.getResult().get();
+                        if (leaderboardScore != null) {
+                            long tempLong = leaderboardScore.getRawScore();
+                            String displayRank = leaderboardScore.getDisplayRank();
+                            long rank = leaderboardScore.getRank();
+                            String playerDisplayName = leaderboardScore.getScoreHolderDisplayName();
+
+                            Log.i("Custom Debugging", "In addOnCompleteListener, " +
+                                    "LeaderboardScore.getRawScore() = (long) " + tempLong);
+                            Log.i("Custom Debugging", "In addOnCompleteListener, " +
+                                    "LeaderboardScore.getDisplayRank() = (String) " + displayRank);
+                            Log.i("Custom Debugging", "In addOnCompleteListener, " +
+                                    "LeaderboardScore.getRank() = (long) " + rank);
+                            Log.i("Custom Debugging", "In addOnCompleteListener, " +
+                                    "LeaderboardScore.getScoreHolderDisplayName() = (String) " + playerDisplayName);
+                            bestScoreForSignedInPlayerFromGPGS[0] = tempLong;
+                        } else {
+                            // TODO -> This too is an error branch and we should handle this as mentioned in the TODO above
+                        }
+                    } else {
+                        // TODO -> This too is an error branch and we should handle this as mentioned in the TODO above
+                    }
+                }
+            });
+        */
+
+        /*  Before moving on to the GamingZoneFragment we want to wait for some time like for e.g. 2 seconds for the value of
+            bestScoreForSignedInPlayerFromGPGS[0] to be updated from the above listeners and we send a value fetched from the
+            GPGS leaderboard to the GamingZoneFragment
+        */
+        /* TODO -> For the 2 seconds of time we are waiting for the value to be fetched from GPGS and updated, we can show
+                   like a loading screen etc. in the meanwhile
+        */
+        new CountDownTimer(2000, 10000) {
+            @Override
+            public void onTick(long l) {}
+            @Override
+            public void onFinish() {
+                openGamingZoneFragment(bestScoreForSignedInPlayerFromGPGS[0]);
+            }
+        }.start();
     }
 
     @Override
@@ -396,7 +508,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onGamingZoneFragmentInteractionSubmitHighScore(int newHighScore) {
+    public void onGamingZoneFragmentInteractionSubmitHighScore(long newHighScore) {
         leaderboardsClient.submitScore(getString(R.string.leaderboard_final_score_leaderboard), newHighScore);
         /*  The method with following signature can be used if we want to send some more data along with the score in the
             form of a tag. For our e.g. "Score Tag"
@@ -422,12 +534,97 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onLeaderboardsFragmentInteractionLeaderboardsTopScoresClicked() {
-        Toast.makeText(this, "Leaderboards - Top 5 Clicked", Toast.LENGTH_SHORT).show();
+        /* Note - (a) The range for last parameter is 1L to 25L i.e. 1 as a long integer to 25 as a long integer,
+                  both inclusive. We have chosen 5 in the example code below
+                  (b) In the following lines of code we are retrieving the top 5 scores from the Leaderboards data using the
+                  method loadTopScores() along with addOnSuccessListener() & addOnFailureListener() listeners
+                  (c) Another way to implement the retrieval of the top scores can be with the same method but with the
+                  addOnCompleteListener() listener, but for now we are following the implementation mentioned above
+         */
+        leaderboardsClient.loadTopScores(getString(R.string.leaderboard_final_score_leaderboard),
+            LeaderboardVariant.TIME_SPAN_ALL_TIME, LeaderboardVariant.COLLECTION_PUBLIC, 5)
+            .addOnSuccessListener(new OnSuccessListener<AnnotatedData<LeaderboardsClient.LeaderboardScores>>() {
+                @Override
+                public void onSuccess(AnnotatedData<LeaderboardsClient.LeaderboardScores> leaderboardScoresAnnotatedData) {
+                    LeaderboardsClient.LeaderboardScores leaderboardScores = leaderboardScoresAnnotatedData.get();
+                    if (leaderboardScores != null) {
+                        LeaderboardScoreBuffer leaderboardScoreBuffer = leaderboardScores.getScores();
+                        int count = leaderboardScoreBuffer.getCount();
+                        Log.i("Custom Debugging", "The data of leaderboardScoreBuffer for " +
+                                "leaderboardsClient.loadTopScores() is as follows ->");
+                        for (int i = 0; i < count; i++) {
+                            LeaderboardScore score = leaderboardScoreBuffer.get(i);
+                            String displayName = score.getScoreHolderDisplayName();
+                            String displayRank = score.getDisplayRank();
+                            long rawScoreValue = score.getRawScore();
+                            Log.i("Custom Debugging", "for i = " + i + ":\n" + "displayName = " + displayName
+                                    + ", displayRank = " + displayRank + ", rawScoreValue = " + rawScoreValue);
+                        }
+                        leaderboardScores.release();
+                    } else {
+                        // TODO -> This too is an error branch and we should handle this as mentioned in the TODO below
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.i("Custom Debugging", "onFailure: Failed to fetch GPGS scores from leaderboard by " +
+                            "LeaderboardsClient.loadTopScores() method");
+                    /* TODO -> We should remove the log statement above as it is just for our understanding and handle this
+                               error branch with something like a dialog which gives a similar message to the above
+                               log statement
+                    */
+                }
+            });
     }
 
     @Override
     public void onLeaderboardsFragmentInteractionLeaderboardsPeerScoresClicked() {
-        Toast.makeText(this, "Leaderboards - Peer 5 Clicked", Toast.LENGTH_SHORT).show();
+        /* Note - (a) The range for last parameter is 1L to 25L i.e. 1 as a long integer to 25 as a long integer,
+                  both inclusive. We have chosen 5 as example in the code below
+                  (b) The method loadPlayerCenteredScores() handles by itself if there are less entries than maxResults/2
+                  above or below and loads more scores where there are more entries (int maxResults is the last parameter,
+                  where we in our example we have given the value 5 as mentioned above)
+                  (c) In the following lines of code we are retrieving 5 peer scores from the Leaderboards data using the
+                  method loadPlayerCenteredScores() along with addOnSuccessListener() & addOnFailureListener() listeners
+                  (d) Another way to implement the retrieval of the top scores can be with the same method but with the
+                  addOnCompleteListener() listener, but for now we are following the implementation mentioned above
+        */
+        leaderboardsClient.loadPlayerCenteredScores(getString(R.string.leaderboard_final_score_leaderboard),
+                        LeaderboardVariant.TIME_SPAN_ALL_TIME, LeaderboardVariant.COLLECTION_PUBLIC, 5)
+            .addOnSuccessListener(new OnSuccessListener<AnnotatedData<LeaderboardsClient.LeaderboardScores>>() {
+                @Override
+                public void onSuccess(AnnotatedData<LeaderboardsClient.LeaderboardScores> leaderboardScoresAnnotatedData) {
+                    LeaderboardsClient.LeaderboardScores leaderboardScores = leaderboardScoresAnnotatedData.get();
+                    if (leaderboardScores != null) {
+                        LeaderboardScoreBuffer leaderboardScoreBuffer = leaderboardScores.getScores();
+                        int count = leaderboardScoreBuffer.getCount();
+                        Log.i("Custom Debugging", "The data of leaderboardScoreBuffer for " +
+                                "leaderboardsClient.loadPlayerCenteredScores() is as follows ->");
+                        for (int i = 0; i < count; i++) {
+                            LeaderboardScore score = leaderboardScoreBuffer.get(i);
+                            String displayName = score.getScoreHolderDisplayName();
+                            String displayRank = score.getDisplayRank();
+                            long rawScoreValue = score.getRawScore();
+                            Log.i("Custom Debugging", "for i = " + i + ":\n" + "displayName = " + displayName
+                                    + ", displayRank = " + displayRank + ", rawScoreValue = " + rawScoreValue);
+                        }
+                        leaderboardScores.release();
+                    } else {
+                        // TODO -> This too is an error branch and we should handle this as mentioned in the TODO below
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Log.i("Custom Debugging", "onFailure: Failed to fetch GPGS scores from leaderboard by " +
+                            "LeaderboardsClient.loadPlayerCenteredScores() method");
+                /* TODO -> We should remove the log statement above as it is just for our understanding and handle this
+                           error branch with something like a dialog which gives a similar message to the above
+                           log statement
+                */
+                }
+            });
     }
 
     @Override

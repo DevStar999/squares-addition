@@ -10,7 +10,6 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.i("Custom Debugging", "onCreate: Entered the MyApplication Class");
         PlayGamesSdk.initialize(this);
     }
 }

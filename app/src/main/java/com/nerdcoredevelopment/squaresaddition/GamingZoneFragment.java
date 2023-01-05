@@ -22,11 +22,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GamingZoneFragment extends Fragment {
+    public static final String BEST_SCORE = "bestScore";
     private Context context;
     private OnGamingZoneFragmentInteractionListener mListener;
     private SharedPreferences sharedPreferences;
     private AppCompatImageView backButton;
     private boolean isFinalScoreCalculated;
+    private long bestScore;
     private AppCompatTextView bestScoreTextView;
     private TextInputLayout firstNumberTextInputLayout;
     private TextInputLayout secondNumberTextInputLayout;
@@ -44,15 +46,27 @@ public class GamingZoneFragment extends Fragment {
         // Required empty public constructor
     }
 
+    public static GamingZoneFragment newInstance(long bestScore) {
+        GamingZoneFragment fragment = new GamingZoneFragment();
+        Bundle args = new Bundle();
+        args.putLong(BEST_SCORE, bestScore);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            this.bestScore = getArguments().getLong(BEST_SCORE);
+        }
     }
 
     private void initialiseViews(View layoutView) {
         backButton = layoutView.findViewById(R.id.title_back_gaming_zone_fragment_button);
+        sharedPreferences.edit().putLong("bestScore", bestScore).apply();
         bestScoreTextView = layoutView.findViewById(R.id.best_score_value_text_view);
-        bestScoreTextView.setText(String.valueOf(sharedPreferences.getInt("bestScore", 0)));
+        bestScoreTextView.setText(String.valueOf(bestScore));
         firstNumberTextInputLayout = layoutView.findViewById(R.id.first_number_text_input_layout);
         secondNumberTextInputLayout = layoutView.findViewById(R.id.second_number_text_input_layout);
         firstNumberValueTextView = layoutView.findViewById(R.id.first_number_value_text);
@@ -127,11 +141,12 @@ public class GamingZoneFragment extends Fragment {
                             (enteredSecondNumber * enteredSecondNumber) + " + " + mysteryBonus);
                     finalScoreLine3TextView.setText(String.valueOf(finalScore));
                     isFinalScoreCalculated = true;
-                    if (finalScore > Integer.parseInt(bestScoreTextView.getText().toString())) {
-                        sharedPreferences.edit().putInt("bestScore", finalScore).apply();
-                        bestScoreTextView.setText(String.valueOf(finalScore));
+                    if (finalScore > bestScore) {
+                        bestScore = finalScore;
+                        sharedPreferences.edit().putLong("bestScore", bestScore).apply();
+                        bestScoreTextView.setText(String.valueOf(bestScore));
                         if (mListener != null) {
-                            mListener.onGamingZoneFragmentInteractionSubmitHighScore(finalScore);
+                            mListener.onGamingZoneFragmentInteractionSubmitHighScore(bestScore);
                         }
                     }
                     actionButton.setText("RESET GAME \uD83D\uDD04️");
@@ -139,7 +154,6 @@ public class GamingZoneFragment extends Fragment {
                     firstNumberTextInputLayout.setEnabled(true);
                     secondNumberTextInputLayout.setEnabled(true);
                     isFinalScoreCalculated = false;
-                    bestScoreTextView.setText(String.valueOf(sharedPreferences.getInt("bestScore", 0)));
                     firstNumberValueTextView.setText("1");
                     secondNumberValueTextView.setText("1");
                     mysteryBonusTextView.setText("?");
@@ -165,7 +179,7 @@ public class GamingZoneFragment extends Fragment {
                         | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                         | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
 
-        sharedPreferences = context.getSharedPreferences("com.nerdcoredevelopment.inappbillingdemo", Context.MODE_PRIVATE);
+        sharedPreferences = context.getSharedPreferences("com.nerdcoredevelopment.squaresaddition", Context.MODE_PRIVATE);
 
         isFinalScoreCalculated = false;
 
@@ -182,7 +196,7 @@ public class GamingZoneFragment extends Fragment {
 
     public interface OnGamingZoneFragmentInteractionListener {
         void onGamingZoneFragmentInteractionBackClicked();
-        void onGamingZoneFragmentInteractionSubmitHighScore(int newHighScore);
+        void onGamingZoneFragmentInteractionSubmitHighScore(long newHighScore);
     }
 
     @Override
