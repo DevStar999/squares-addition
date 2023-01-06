@@ -46,6 +46,17 @@ import com.google.android.gms.tasks.Task;
 
 /*  Notes related to Google Play Games Services (GPGS)
     (1) Consent Screen (In GCP Project) =>
+        (i) Remember to make 2 OAuth 2.0 Client Ids for Android, one with SHA-1 certificate fingerprint of the debug variant
+        of the app which can be found by running 'signingReport' in Gradle in Android Studio and the other with SHA-1
+        certificate fingerprint of the release variant of the app which can be found in the Google Play Console -> Setup ->
+        App Integrity -> App signing -> App signing key certificate
+        (ii) Thus create 2 Android credentials in the Google Play Console -> Play Games services -> Setup and management ->
+        Configuration -> Credentials. One can be used while development and the other for production.
+        (iii) After publishing the code changes with GPGS features to production. The users were automatically signed in
+        without any prompt which showed the Consent Screen for user to accept. Most likely, this is because the scopes which
+        we added (as instructed in the documentation) while creating the consent screen were 'Non-sensitive scopes'. However,
+        we need to check if this holds if we add some info like App logo, link to 'Terms of Service, 'Privacy Policy' etc. to
+        the Consent Screen due to which our Consent Screen may require to go through verification.
     (2) Anti-Piracy =>
         (i) The option to turn this on or off is available at Play Console -> Current App -> Play Games services -> Setup
         and management -> Configuration -> Credentials -> <In any Android credential>
@@ -156,6 +167,7 @@ import com.google.android.gms.tasks.Task;
         Play Games services keeps track of the XP earned by each player and sends out a notification to the Google Play Games
         app when the player has earned enough points to 'level up'. Players can view their level and XP history from their
         Profile page in the Google Play Games app.
+        Important Point - The points allotted to an achievement can be changed even after the achievement is published
         (vii) Minimum achievements : A game that integrates achievements should have at least 5 achievements before it is
         published. You can test with fewer than 5 achievements, but it is recommended you have at least 5 achievements
         created before you publish your game.
@@ -219,6 +231,11 @@ import com.google.android.gms.tasks.Task;
         a leaderboard
 */
 // The list of TODOs related to this project is as follows
+/* TODO -> Add details to the Consent Screen like App logo, link to 'Terms of Service, 'Privacy Policy' etc. after which the
+           Consent Screen may be required to go through verification process by Google. After the verification is
+           completed and the Consent Screen is published to production, then check if the user when does the very 1st sign-in
+           in the app, is he/she prompted with a Consent Screen or directly allowed sign-in into the app.
+*/
 /* TODO -> Verify all the GPGS features are working correctly and proper error handling is done for the following -
            (a) When user is not signed-in
            (b) No internet connection
