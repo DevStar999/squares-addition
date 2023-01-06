@@ -4,6 +4,16 @@
     <string translatable="false"  name="game_services_project_id">47423839227</string>
     <!--package_name-->
     <string name="package_name" translatable="false">com.nerdcoredevelopment.squaresaddition</string>
-    <!--leaderboard FINAL_SCORE_LEADERBOARD-->
+    <!--achievement Newbie-->
+    <string name="achievement_newbie" translatable="false">CgkI-7e51bABEAIQBA</string>
+    <!--achievement Backbencher-->
+    <string name="achievement_backbencher" translatable="false">CgkI-7e51bABEAIQBw</string>
+    <!--achievement Consistent-->
+    <string name="achievement_consistent" translatable="false">CgkI-7e51bABEAIQBQ</string>
+    <!--achievement Super Scorer-->
+    <string name="achievement_super_scorer" translatable="false">CgkI-7e51bABEAIQCA</string>
+    <!--achievement Seasoned-->
+    <string name="achievement_seasoned" translatable="false">CgkI-7e51bABEAIQBg</string>
+    <!--leaderboard Final Score Leaderboard-->
     <string name="leaderboard_final_score_leaderboard" translatable="false">CgkI-7e51bABEAIQAg</string>
 </resources>
