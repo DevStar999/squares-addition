@@ -189,6 +189,17 @@ import com.google.android.gms.tasks.Task;
         achievement to the user so as to trigger excitement & engagement in the user regarding the newly revealed achievement
         (xvi) An important thing to note here is that as 'Steps needed' i.e. the no. of steps in an Incremental achievement
         is a part of it's type being 'Incremental' it cannot be changed once the achievement has been published
+        (xvii) Notes related to the methods of a important classes the related to the Achievements feature are as follows -
+        (a) AchievementsClient : Refer to this link to check out all the methods of this class ->
+        https://developers.google.com/android/reference/com/google/android/gms/games/AchievementsClient
+        However, all the relevant methods for our use have been tested out which are namely getAchievementsIntent(),
+        increment(), load(), reveal(), setSteps() & unlock().
+        (b) AchievementsBuffer : Refer to this link to check out all the methods of this class ->
+        https://developers.google.com/android/reference/com/google/android/gms/games/achievement/AchievementBuffer
+        However, the only relevant method of this class is get() method which returns an object of class 'Achievement'.
+        (xviii) Sample data in the objects of important classes related to the achievements feature can be found in text
+        files in Google Drive. The classes namely are as follows ->
+        (a) Achievement (b) Player
     (6) Publishing API (Reference - https://developer.android.com/games/pgs/publishing/publishing) =>
         (i) Allows us to automate some tasks or functions which can be done manually through the Google Play Console as well.
         (ii) As of right now, we choose to ignore this API until some need of this comes later.
