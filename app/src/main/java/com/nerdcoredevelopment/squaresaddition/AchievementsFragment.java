@@ -16,6 +16,7 @@ public class AchievementsFragment extends Fragment {
     private OnAchievementsFragmentInteractionListener mListener;
     private AppCompatImageView backButton;
     private AppCompatButton showAchievementsButton;
+    private AppCompatButton loadAchievementsDataButton;
 
     public AchievementsFragment() {
         // Required empty public constructor
@@ -43,6 +44,14 @@ public class AchievementsFragment extends Fragment {
                 }
             }
         });
+        loadAchievementsDataButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mListener != null) {
+                    mListener.onAchievementsFragmentInteractionLoadAchievementsDataClicked();
+                }
+            }
+        });
     }
 
     @Override
@@ -59,6 +68,7 @@ public class AchievementsFragment extends Fragment {
 
         backButton = view.findViewById(R.id.title_back_achievements_fragment_button);
         showAchievementsButton = view.findViewById(R.id.show_achievements_button);
+        loadAchievementsDataButton = view.findViewById(R.id.load_achievements_data_button);
 
         settingOnClickListeners();
 
@@ -68,6 +78,7 @@ public class AchievementsFragment extends Fragment {
     public interface OnAchievementsFragmentInteractionListener {
         void onAchievementsFragmentInteractionBackClicked();
         void onAchievementsFragmentInteractionShowAchievementsClicked();
+        void onAchievementsFragmentInteractionLoadAchievementsDataClicked();
     }
 
     @Override

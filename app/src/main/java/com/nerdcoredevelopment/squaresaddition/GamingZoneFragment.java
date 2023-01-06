@@ -133,8 +133,6 @@ public class GamingZoneFragment extends Fragment {
                     int finalScore = (enteredFirstNumber * enteredFirstNumber) +
                             (enteredSecondNumber * enteredSecondNumber) + mysteryBonus;
 
-                    totalGamesPlayed++;
-                    sharedPreferences.edit().putInt("totalGamesPlayed", totalGamesPlayed).apply();
                     firstNumberTextInputLayout.setEnabled(false);
                     secondNumberTextInputLayout.setEnabled(false);
                     mysteryBonusTextView.setText(String.valueOf(mysteryBonus));
@@ -155,6 +153,14 @@ public class GamingZoneFragment extends Fragment {
                         }
                     }
                     actionButton.setText("RESET GAME \uD83D\uDD04️");
+                    totalGamesPlayed++;
+                    sharedPreferences.edit().putInt("totalGamesPlayed", totalGamesPlayed).apply();
+                    if (mListener != null) {
+                        mListener.onGamingZoneFragmentInteractionIncrementGamesPlayed(totalGamesPlayed);
+                    }
+                    if (mListener != null) {
+                        mListener.onGamingZoneFragmentInteractionCheckScoreBasedAchievement(finalScore);
+                    }
                 } else { // Reset the game to begin fresh
                     firstNumberTextInputLayout.setEnabled(true);
                     secondNumberTextInputLayout.setEnabled(true);
@@ -202,6 +208,8 @@ public class GamingZoneFragment extends Fragment {
     public interface OnGamingZoneFragmentInteractionListener {
         void onGamingZoneFragmentInteractionBackClicked();
         void onGamingZoneFragmentInteractionSubmitHighScore(long newHighScore);
+        void onGamingZoneFragmentInteractionIncrementGamesPlayed(int totalGamesPlayed);
+        void onGamingZoneFragmentInteractionCheckScoreBasedAchievement(int currentScore);
     }
 
     @Override

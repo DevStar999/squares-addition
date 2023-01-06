@@ -1,5 +1,11 @@
 package com.nerdcoredevelopment.squaresaddition;
 
+import static com.google.android.gms.games.achievement.Achievement.STATE_HIDDEN;
+import static com.google.android.gms.games.achievement.Achievement.STATE_REVEALED;
+import static com.google.android.gms.games.achievement.Achievement.STATE_UNLOCKED;
+import static com.google.android.gms.games.achievement.Achievement.TYPE_INCREMENTAL;
+import static com.google.android.gms.games.achievement.Achievement.TYPE_STANDARD;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -22,11 +28,14 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.android.gms.games.AchievementsClient;
 import com.google.android.gms.games.AnnotatedData;
 import com.google.android.gms.games.AuthenticationResult;
 import com.google.android.gms.games.GamesSignInClient;
 import com.google.android.gms.games.LeaderboardsClient;
 import com.google.android.gms.games.PlayGames;
+import com.google.android.gms.games.achievement.Achievement;
+import com.google.android.gms.games.achievement.AchievementBuffer;
 import com.google.android.gms.games.leaderboard.LeaderboardScore;
 import com.google.android.gms.games.leaderboard.LeaderboardScoreBuffer;
 import com.google.android.gms.games.leaderboard.LeaderboardVariant;
@@ -99,19 +108,85 @@ import com.google.android.gms.tasks.Task;
         (d) Avatar Image = Refer from images of object info in Google Drive folder for this app
         (xiii) Notes related to the methods of a important classes the related to the Leaderboards feature are as follows -
         (a) LeaderboardsClient : Refer to this link to check out all the methods of this class ->
-        https://developers.google.com/android/reference/com/google/android/gms/games/LeaderboardsClient
-        However, all the relevant methods for our use have been tested out which are namely getLeaderboardIntent(),
-        loadCurrentPlayerLeaderboardScore(), loadPlayerCenteredScores(), loadTopScores() & submitScore()
+            https://developers.google.com/android/reference/com/google/android/gms/games/LeaderboardsClient
+            However, all the relevant methods for our use have been tested out which are namely getLeaderboardIntent(),
+            loadCurrentPlayerLeaderboardScore(), loadPlayerCenteredScores(), loadTopScores() & submitScore()
         (b) LeaderboardsClient.LeaderboardScores : Refer to this link to check out all the methods of this class ->
-        https://developers.google.com/android/reference/com/google/android/gms/games/LeaderboardsClient.LeaderboardScores
-        However, the only relevant method of this class is getScores() method
+            https://developers.google.com/android/reference/com/google/android/gms/games/LeaderboardsClient.LeaderboardScores
+            However, the only relevant method of this class is getScores() method
         (c) LeaderboardScoreBuffer : The only method this class consists which also happens to be relevant for us is the
-        get() method which returns a LeaderboardScore object and this method should be used as shown in the code below
+            get() method which returns a LeaderboardScore object and this method should be used as shown in the code below
         (xiv) Sample data in the objects of important classes related to the leaderboards feature can be found in text files
         in Google Drive. The classes namely are as follows ->
         (a) LeaderboardScore (b) Player (c) CurrentPlayerInfo
         (d) PlayerLevelInfo (e) PlayerRelationshipInfo (f) PlayerLevel
     (5) Achievements =>
+        (i) The basic elements which are associated with every achievement are as follows -
+        (a) Id (b) Name (c) Description (d) Icon (e) List order
+        To know more about these refer -> developers.google.com/games/services/common/concepts/achievements#the_basics
+        (ii) Achievements can be in any one of the following 3 states
+        (a) Hidden State : A hidden achievement means that details about the achievement are hidden from the player. The
+            Google Play games services provides a generic placeholder description and icon for the achievement while it's in
+            a hidden state. We recommend making an achievement hidden if it contains a spoiler you don't want to reveal about
+            your game too early (for example, "Discover that you were a ghost all along!").
+        (b) Revealed State : A revealed achievement means that the player knows about the achievement, but hasn't earned
+            it yet. Most achievements start in the revealed state.
+        (c) Unlocked State : An unlocked achievement means that the player has successfully earned the achievement. An
+            achievement can be unlocked offline. When the game comes online, it syncs with the Google Play games services to
+            update the achievement's unlocked state.
+        (iii) Achievements can be designated as (a) Standard OR (b) Incremental
+        (iv) Incremental Achievements : (a) Generally, an incremental achievement involves a player making gradual progress
+            towards earning the achievement over a longer period of time. As the player makes progress towards the
+            incremental achievement, you can report the player's partial progress to the Google Play games services.
+        (b) Incremental achievements are cumulative across game sessions, and progress cannot be removed or reset from within
+            the game. For example, "Win 50 games" would qualify as an incremental achievement. "Win 3 games in a row" would
+            not, as the player's progress would be reset when they lose a game.
+        (c) When creating an incremental achievement, you must define the total number of steps required to unlock it (this
+            must be a number between 2 and 10,000). As the user makes progress towards unlocking the achievement, you should
+            report the number of additional steps the user has made to the Google Play games services. Once the total number
+            of steps reaches the unlock value, the achievement is unlocked (even if it was hidden). There's no need for you
+            to store the user's cumulative progress.
+        (v) Points : Achievements have a point value associated with them. The total points associated with an achievement
+        must be a multiple of 5 and the whole game can never have a total of more than 1000 points for all of its
+        achievements (although it can have less). In addition, no single achievement can have more than 200 points.
+        (vi) Earning experience points (XP) : Players can gain levels on their Game Profile when they earn achievements in
+        Play Games enabled games. For every point associated with an achievement, the player gains 100 experience points (XP)
+        when they earn that achievement. In other words -
+        XP for an achievement = 100 * (point value for the achievement)
+        Play Games services keeps track of the XP earned by each player and sends out a notification to the Google Play Games
+        app when the player has earned enough points to 'level up'. Players can view their level and XP history from their
+        Profile page in the Google Play Games app.
+        (vii) Minimum achievements : A game that integrates achievements should have at least 5 achievements before it is
+        published. You can test with fewer than 5 achievements, but it is recommended you have at least 5 achievements
+        created before you publish your game.
+        (viii) Maximum achievements : The number of achievements is limited by the points limits and distribution. With a
+        maximum number of points of 1000, and each achievement assigned 5 points, the maximum number of achievements is 200.
+        However, if achievements are assigned more points then the number of achievements available decreases as a result.
+        (ix) Icon guidelines : We can refer to these guidelines in the document as follows ->
+        https://developers.google.com/games/services/common/concepts/achievements#icon_guidelines
+        (x) Creating an achievement : To know more about how to create an achievement refer to the document below -
+        https://developers.google.com/games/services/common/concepts/achievements#creating_an_achievement
+        (xi) Editing an achievement : This can be done by the following 3 methods -
+        (a) Undoing an edit
+        (b) Deleting an achievement - Once your achievement has been published, it cannot be deleted. You can only delete an
+            achievement in a pre-published state by clicking the button labeled Delete at the bottom of the form for that
+            achievement.
+        (c) Resetting an achievement - You can only reset player progress data for your draft achievements.
+        To know more about this refer to the following link -
+        https://developers.google.com/games/services/common/concepts/achievements#editing_an_achievement
+        (xii) For incremental achievements, using the method setSteps() is more precise and convenient as compared to the
+        method increment() as it allows us to set the exact number of steps completed as progress towards and achievement.
+        If the code is not written perfectly, then using method increment() may make the number of steps reach a value that
+        is not what we expect because of some bug in the code. Thus, it's far more convenient to use setSteps() method, since
+        after using it we know exactly how many steps towards an achievement have been completed.
+        (xiii) If we pass the maximum number of steps required to unlock an incremental achievement as argument in the method
+        setSteps(), then the achievement is automatically unlocked by GPGS without us have to write any code to handle this.
+        (xiv) An important thing to remember here is that after calling the reveal() method, GPGS does NOT give a
+        notification in a toast message, like it does when an achievement is unlocked. So, we need to do this by ourselves
+        so as to stimulate curiosity and excitement in the user about the newly revealed achievement as to know what it is.
+        (xv) It seems to feel like a wise-man's strategy to reveal an achievement (either Standard or Incremental) at some
+        point of progress towards that achievement for e.g. at 25%progress or 50% progress etc. to reveal a hidden
+        achievement to the user so as to trigger excitement & engagement in the user regarding the newly revealed achievement
     (6) Publishing API (Reference - https://developer.android.com/games/pgs/publishing/publishing) =>
         (i) Allows us to automate some tasks or functions which can be done manually through the Google Play Console as well.
         (ii) As of right now, we choose to ignore this API until some need of this comes later.
@@ -136,11 +211,29 @@ import com.google.android.gms.tasks.Task;
            (b) No internet connection
            or any combination of the above two
 */
-/* TODO -> The GPGS feature of 'Achievements' is to be implemented in the next visit to this feature with the following
-           tasks to be kept in mind -
-           (a) Understanding the concept (Refer) -> https://developers.google.com/games/services/common/concepts/achievements
-           (b) Client Implementation (Refer) -> https://developers.google.com/games/services/android/achievements
-           (c) Take a look at the Quality checklist (Refer) -> https://developers.google.com/games/services/checklist
+// TODO -> Try and see if the number of steps in an incremental achievement can be changed after publishing
+/* TODO -> You should create like a 'Fresh Data' button wherever it we may feel that it is required like before e.g. showing
+           the leaderboards, achievements, loading some data etc. After this button is clicked, for the immediate next clicks
+           for showing leaderboards, achievements etc. we should call the methods which fetch the fresh data from the servers
+           instead of the methods which we usually call which may show us cached/stale data sometimes
+*/
+/* TODO -> The code written for achievements code is not the best and it can go wrong in the following ways -
+           (1) Suppose if one user plays the game 25 times, then that user will unlock all achievements related to the count
+           of games played which is as expected. But now if a different user signs in who has not unlocked those achievements
+           will never be able to unlock those achievements as the value of the variable 'totalGamesPlayed' is stored only
+           locally and only used under certain conditions to submit progress for achievement via the setSteps() method. The
+           value of the variable 'totalGamesPlayed' is NOT stored online and also NOT fetched from an online database, thus
+           it will be incorrect for different users
+           (2) Ideally we should store the info about the achievements related to score being unlocked in a boolean local
+           variable so as to reduce the API use and keep under the allowed quota. This is what we have done now as well.
+           But this will mean that if the 1st user has unlocked these achievements and then a 2nd user signs in the app who
+           has not unlocked these achievements, then he/she will never be able to unlock these achievements as locally the
+           info about these achievements is that they have been unlocked
+                Thus, the data which is stored locally and is in some way or the other used for GPGS related features can
+           cause errors/unexpected behaviours etc. especially if the user signs in with a different Google Play Games
+           profile. This is the reason why we should explore the 'Saved Games' feature once. If we do explore this feature
+           also make sure to monitor the API usage consumption in GCP project of the GPGS API so as to ensure that we stay
+           within the quota limit
 */
 public class MainActivity extends AppCompatActivity implements
         InfoFragment.OnInfoFragmentInteractionListener,
@@ -151,12 +244,14 @@ public class MainActivity extends AppCompatActivity implements
         AchievementsFragment.OnAchievementsFragmentInteractionListener,
         SettingsFragment.OnSettingsFragmentInteractionListener {
     public static final int RC_LEADERBOARD_UI = 9004;
+    private static final int RC_ACHIEVEMENT_UI = 9003;
     private SharedPreferences sharedPreferences;
     private AppCompatTextView gpgsSignInStatusTextView;
     private AppCompatImageView gpgsSignInImageView;
     private GamesSignInClient gamesSignInClient;
     private boolean isUserSignedIn;
     private LeaderboardsClient leaderboardsClient;
+    private AchievementsClient achievementsClient;
 
     private void initialise() {
         sharedPreferences = getSharedPreferences("com.nerdcoredevelopment.squaresaddition", Context.MODE_PRIVATE);
@@ -165,6 +260,7 @@ public class MainActivity extends AppCompatActivity implements
         gamesSignInClient = PlayGames.getGamesSignInClient(MainActivity.this);
         isUserSignedIn = false;
         leaderboardsClient = PlayGames.getLeaderboardsClient(MainActivity.this);
+        achievementsClient = PlayGames.getAchievementsClient(MainActivity.this);
     }
 
     @SuppressLint("SourceLockedOrientationActivity")
@@ -534,6 +630,34 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
+    public void onGamingZoneFragmentInteractionIncrementGamesPlayed(int totalGamesPlayed) {
+        if (totalGamesPlayed <= 5) {
+            achievementsClient.setSteps(getString(R.string.achievement_newbie), totalGamesPlayed);
+            achievementsClient.setSteps(getString(R.string.achievement_consistent), totalGamesPlayed);
+            achievementsClient.setSteps(getString(R.string.achievement_seasoned), totalGamesPlayed);
+        } else if (totalGamesPlayed <= 10) {
+            achievementsClient.setSteps(getString(R.string.achievement_consistent), totalGamesPlayed);
+            achievementsClient.setSteps(getString(R.string.achievement_seasoned), totalGamesPlayed);
+        } else if (totalGamesPlayed <= 20) {
+            if (totalGamesPlayed == 11) {
+                achievementsClient.reveal(getString(R.string.achievement_seasoned));
+            }
+            achievementsClient.setSteps(getString(R.string.achievement_seasoned), totalGamesPlayed);
+        }
+    }
+
+    @Override
+    public void onGamingZoneFragmentInteractionCheckScoreBasedAchievement(int currentScore) {
+        if (currentScore <= 10 && !sharedPreferences.getBoolean("backbencherAchievementUnlocked", false)) {
+            achievementsClient.unlock(getString(R.string.achievement_backbencher));
+            sharedPreferences.edit().putBoolean("backbencherAchievementUnlocked", true).apply();
+        } else if (currentScore >= 100 && !sharedPreferences.getBoolean("superScorerAchievementUnlocked", false)) {
+            achievementsClient.unlock(getString(R.string.achievement_super_scorer));
+            sharedPreferences.edit().putBoolean("superScorerAchievementUnlocked", true).apply();
+        }
+    }
+
+    @Override
     public void onLeaderboardsFragmentInteractionBackClicked() {
         onBackPressed();
     }
@@ -582,9 +706,12 @@ public class MainActivity extends AppCompatActivity implements
                             Log.i("Custom Debugging", "for i = " + i + ":\n" + "displayName = " + displayName
                                     + ", displayRank = " + displayRank + ", rawScoreValue = " + rawScoreValue);
                         }
-                        leaderboardScores.release();
                     } else {
                         // TODO -> This too is an error branch and we should handle this as mentioned in the TODO below
+                    }
+
+                    if (leaderboardScores != null) {
+                        leaderboardScores.release();
                     }
                 }
             }).addOnFailureListener(new OnFailureListener() {
@@ -631,9 +758,12 @@ public class MainActivity extends AppCompatActivity implements
                             Log.i("Custom Debugging", "for i = " + i + ":\n" + "displayName = " + displayName
                                     + ", displayRank = " + displayRank + ", rawScoreValue = " + rawScoreValue);
                         }
-                        leaderboardScores.release();
                     } else {
                         // TODO -> This too is an error branch and we should handle this as mentioned in the TODO below
+                    }
+
+                    if (leaderboardScores != null) {
+                        leaderboardScores.release();
                     }
                 }
             }).addOnFailureListener(new OnFailureListener() {
@@ -641,10 +771,10 @@ public class MainActivity extends AppCompatActivity implements
                 public void onFailure(@NonNull Exception e) {
                     Log.i("Custom Debugging", "onFailure: Failed to fetch GPGS scores from leaderboard by " +
                             "LeaderboardsClient.loadPlayerCenteredScores() method");
-                /* TODO -> We should remove the log statement above as it is just for our understanding and handle this
-                           error branch with something like a dialog which gives a similar message to the above
-                           log statement
-                */
+                    /* TODO -> We should remove the log statement above as it is just for our understanding and handle this
+                               error branch with something like a dialog which gives a similar message to the above
+                               log statement
+                    */
                 }
             });
     }
@@ -666,7 +796,75 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onAchievementsFragmentInteractionShowAchievementsClicked() {
-        Toast.makeText(MainActivity.this, "Show Achievements Clicked", Toast.LENGTH_SHORT).show();
+        if (!isUserSignedIn) {
+            Toast.makeText(MainActivity.this, "This feature cannot be used unless you are signed in",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+        achievementsClient.getAchievementsIntent().addOnSuccessListener(new OnSuccessListener<Intent>() {
+            @Override
+            public void onSuccess(Intent intent) {
+                startActivityForResult(intent, RC_ACHIEVEMENT_UI);
+            }
+        });
+    }
+
+    @Override
+    public void onAchievementsFragmentInteractionLoadAchievementsDataClicked() {
+        if (!isUserSignedIn) {
+            Toast.makeText(MainActivity.this, "This feature cannot be used unless you are signed in",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+        achievementsClient.load(false).addOnSuccessListener(new OnSuccessListener<AnnotatedData<AchievementBuffer>>() {
+            @Override
+            public void onSuccess(AnnotatedData<AchievementBuffer> achievementBufferAnnotatedData) {
+                AchievementBuffer achievementBuffer = achievementBufferAnnotatedData.get();
+                if (achievementBuffer != null) {
+                    int count = achievementBuffer.getCount();
+                    Log.i("Custom Debugging", "The data of achievementBuffer for " +
+                            "achievementsClient.load() is as follows ->");
+                    for (int i = 0; i < count; i++) {
+                        Achievement achievement = achievementBuffer.get(i);
+                        String achievementId = achievement.getAchievementId();
+                        String achievementName = achievement.getName();
+                        int achievementState = achievement.getState();
+                        int achievementType = achievement.getType();
+                        Log.i("Custom Debugging", "for i = " + i + ":\n" + "achievementId = " + achievementId
+                                + ", achievementName = " + achievementName);
+                        if (achievementState == STATE_HIDDEN) {
+                            Log.i("Custom Debugging", "achievementState = STATE_HIDDEN");
+                        } else if (achievementState == STATE_REVEALED) {
+                            Log.i("Custom Debugging", "achievementState = STATE_REVEALED");
+                        } else if (achievementState == STATE_UNLOCKED) {
+                            Log.i("Custom Debugging", "achievementState = STATE_UNLOCKED");
+                        }
+
+                        if (achievementType == TYPE_STANDARD) {
+                            Log.i("Custom Debugging", "achievementState = TYPE_STANDARD");
+                        } else if (achievementType == TYPE_INCREMENTAL) {
+                            Log.i("Custom Debugging", "achievementState = TYPE_INCREMENTAL");
+                        }
+                    }
+                } else {
+                    // TODO -> This too is an error branch and we should handle this as mentioned in the TODO below
+                }
+
+                if (achievementBuffer != null) {
+                    achievementBuffer.release();
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.i("Custom Debugging", "onFailure: Failed to fetch GPGS achievements by " +
+                        "AchievementClient.load() method");
+                /* TODO -> We should remove the log statement above as it is just for our understanding and handle this
+                           error branch with something like a dialog which gives a similar message to the above
+                           log statement
+                */
+            }
+        });
     }
 
     @Override

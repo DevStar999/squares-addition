@@ -70,6 +70,20 @@
             android:textSize="14sp"
             android:textStyle="bold" />
 
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/load_achievements_data_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:background="@drawable/click_button"
+            android:paddingVertical="16dp"
+            android:paddingHorizontal="24dp"
+            android:text="LOAD ACHIEVEMENTS DATA"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
