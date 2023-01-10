@@ -231,21 +231,10 @@ import com.google.android.gms.tasks.Task;
         a leaderboard
 */
 // The list of TODOs related to this project is as follows
-/* TODO -> Add details to the Consent Screen like App logo, link to 'Terms of Service, 'Privacy Policy' etc. after which the
+/* TODO -> Add details to the Consent Screen like App logo, link to 'Terms of Service', 'Privacy Policy' etc. after which the
            Consent Screen may be required to go through verification process by Google. After the verification is
            completed and the Consent Screen is published to production, then check if the user when does the very 1st sign-in
            in the app, is he/she prompted with a Consent Screen or directly allowed sign-in into the app.
-*/
-/* TODO -> Verify all the GPGS features are working correctly and proper error handling is done for the following -
-           (a) When user is not signed-in
-           (b) No internet connection
-           or any combination of the above two
-*/
-// TODO -> Try and see if the number of steps in an incremental achievement can be changed after publishing
-/* TODO -> You should create like a 'Fresh Data' button wherever it we may feel that it is required like before e.g. showing
-           the leaderboards, achievements, loading some data etc. After this button is clicked, for the immediate next clicks
-           for showing leaderboards, achievements etc. we should call the methods which fetch the fresh data from the servers
-           instead of the methods which we usually call which may show us cached/stale data sometimes
 */
 /* TODO -> The code written for achievements code is not the best and it can go wrong in the following ways -
            (1) Suppose if one user plays the game 25 times, then that user will unlock all achievements related to the count
@@ -264,6 +253,9 @@ import com.google.android.gms.tasks.Task;
            profile. This is the reason why we should explore the 'Saved Games' feature once. If we do explore this feature
            also make sure to monitor the API usage consumption in GCP project of the GPGS API so as to ensure that we stay
            within the quota limit
+*/
+/* TODO -> We have added all the required TODOs to '2048 Champs' which are relevant for the 1st release with GPGS features.
+           So do check them out before the 1st release with GPGS features.
 */
 public class MainActivity extends AppCompatActivity implements
         InfoFragment.OnInfoFragmentInteractionListener,
