@@ -131,6 +131,9 @@ import com.google.android.gms.tasks.Task;
         in Google Drive. The classes namely are as follows ->
         (a) LeaderboardScore (b) Player (c) CurrentPlayerInfo
         (d) PlayerLevelInfo (e) PlayerRelationshipInfo (f) PlayerLevel
+        (xv) The 'Google Play Games' app is required to be installed for this feature to work, but the prompt to the user
+        to install the app is handled by the inbuilt code itself and we do not have to write any code for this. This flow
+        will work correctly as mentioned above, only if the user is signed in.
     (5) Achievements =>
         (i) The basic elements which are associated with every achievement are as follows -
         (a) Id (b) Name (c) Description (d) Icon (e) List order
@@ -212,6 +215,9 @@ import com.google.android.gms.tasks.Task;
         (xviii) Sample data in the objects of important classes related to the achievements feature can be found in text
         files in Google Drive. The classes namely are as follows ->
         (a) Achievement (b) Player
+        (xix) The 'Google Play Games' app is required to be installed for this feature to work, but the prompt to the user
+        to install the app is handled by the inbuilt code itself and we do not have to write any code for this. This flow
+        will work correctly as mentioned above, only if the user is signed in.
     (6) Publishing API (Reference - https://developer.android.com/games/pgs/publishing/publishing) =>
         (i) Allows us to automate some tasks or functions which can be done manually through the Google Play Console as well.
         (ii) As of right now, we choose to ignore this API until some need of this comes later.
