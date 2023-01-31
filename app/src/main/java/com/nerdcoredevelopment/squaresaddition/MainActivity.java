@@ -698,10 +698,10 @@ public class MainActivity extends AppCompatActivity implements
             return;
         }
         leaderboardsClient.getLeaderboardIntent(getString(R.string.leaderboard_final_score_leaderboard))
-            .addOnCompleteListener(new OnCompleteListener<Intent>() {
+            .addOnSuccessListener(new OnSuccessListener<Intent>() {
                 @Override
-                public void onComplete(@NonNull Task<Intent> task) {
-                    startActivityForResult(task.getResult(), RC_LEADERBOARD_UI);
+                public void onSuccess(Intent intent) {
+                    startActivityForResult(intent, RC_LEADERBOARD_UI);
                 }
             });
     }
