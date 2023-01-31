@@ -36,6 +36,8 @@ import com.google.android.gms.games.LeaderboardsClient;
 import com.google.android.gms.games.PlayGames;
 import com.google.android.gms.games.achievement.Achievement;
 import com.google.android.gms.games.achievement.AchievementBuffer;
+import com.google.android.gms.games.leaderboard.Leaderboard;
+import com.google.android.gms.games.leaderboard.LeaderboardBuffer;
 import com.google.android.gms.games.leaderboard.LeaderboardScore;
 import com.google.android.gms.games.leaderboard.LeaderboardScoreBuffer;
 import com.google.android.gms.games.leaderboard.LeaderboardVariant;
@@ -43,6 +45,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+
+import java.util.List;
 
 /*  Notes related to Google Play Games Services (GPGS)
     (1) Consent Screen (In GCP Project) =>
@@ -697,6 +701,7 @@ public class MainActivity extends AppCompatActivity implements
                     Toast.LENGTH_SHORT).show();
             return;
         }
+        /*
         leaderboardsClient.getLeaderboardIntent(getString(R.string.leaderboard_final_score_leaderboard))
             .addOnSuccessListener(new OnSuccessListener<Intent>() {
                 @Override
@@ -704,6 +709,49 @@ public class MainActivity extends AppCompatActivity implements
                     startActivityForResult(intent, RC_LEADERBOARD_UI);
                 }
             });
+         */
+        leaderboardsClient.loadLeaderboardMetadata(false)
+                .addOnSuccessListener(new OnSuccessListener<AnnotatedData<LeaderboardBuffer>>() {
+            @Override
+            public void onSuccess(AnnotatedData<LeaderboardBuffer> leaderboardBufferAnnotatedData) {
+                LeaderboardBuffer leaderboardBuffer = leaderboardBufferAnnotatedData.get();
+                if (leaderboardBuffer != null) {
+                    int count = leaderboardBuffer.getCount();
+                    for (int index = 0; index < count; index++) {
+                        Leaderboard leaderboard = leaderboardBuffer.get(index);
+                        // Log.i("Custom Debugging", "onSuccess: Leaderboard.toString() = " + leaderboard);
+                        List<LeaderboardVariant> variants = leaderboard.getVariants();
+                        for (int variantIndex = 0; variantIndex < variants.size(); variantIndex++) {
+                            LeaderboardVariant currentVariant = variants.get(variantIndex);
+                            // Log.i("Custom Debugging", "currentVariant.toString() = " + currentVariant);
+                            /*
+                            if (currentVariant.getCollection() == LeaderboardVariant.COLLECTION_FRIENDS) {
+                                Log.i("Custom Debugging", "variantIndex = " + variantIndex + ", "
+                                        + "Collection is of FRIENDS");
+                            } else if (currentVariant.getCollection() == LeaderboardVariant.COLLECTION_PUBLIC) {
+                                Log.i("Custom Debugging", "variantIndex = " + variantIndex + ", "
+                                        + "Collection is PUBLIC");
+                            }
+                            */
+                            if (currentVariant.getTimeSpan() == LeaderboardVariant.TIME_SPAN_ALL_TIME &&
+                                    currentVariant.getCollection() == LeaderboardVariant.COLLECTION_PUBLIC) {
+                                // Will get a proper score
+                                Log.i("Custom Debugging", "rawPlayerScore = " + currentVariant.getRawPlayerScore());
+                            } else if (currentVariant.getTimeSpan() == LeaderboardVariant.TIME_SPAN_WEEKLY &&
+                                    currentVariant.getCollection() == LeaderboardVariant.COLLECTION_FRIENDS) {
+                                // Will get 'null' or 'none' values
+                                Log.i("Custom Debugging", "rawPlayerScore = " + currentVariant.getRawPlayerScore());
+                            }
+                        }
+                    }
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // Keeping blank for now
+            }
+        });
     }
 
     @Override
