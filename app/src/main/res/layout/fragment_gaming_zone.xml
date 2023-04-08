@@ -81,10 +81,10 @@
         android:id="@+id/numbers_linear_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:showDividers="middle"
         android:divider="@drawable/gap_selection_numbers"
         android:gravity="center"
+        android:orientation="horizontal"
+        android:showDividers="middle"
         app:layout_constraintBottom_toTopOf="@id/mystery_bonus_linear_layout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -92,10 +92,10 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/first_number_text_input_layout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="1st Number"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+            android:hint="1st Number">
 
             <AutoCompleteTextView
                 android:id="@+id/first_number_value_text"
@@ -111,10 +111,10 @@
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/second_number_text_input_layout"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:hint="2nd Number"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+            android:hint="2nd Number">
 
             <AutoCompleteTextView
                 android:id="@+id/second_number_value_text"
@@ -171,8 +171,8 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
         android:divider="@drawable/gap_final_score_lines"
-        android:showDividers="middle"
         android:orientation="vertical"
+        android:showDividers="middle"
         app:layout_constraintBottom_toTopOf="@id/action_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -183,8 +183,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:visibility="invisible"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="invisible">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/final_score_label_line1_text_view"
@@ -214,8 +214,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
-            android:visibility="invisible"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="invisible">
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/final_score_label_line2_text_view"

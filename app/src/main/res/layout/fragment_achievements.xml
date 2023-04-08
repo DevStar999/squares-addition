@@ -49,9 +49,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="32dp"
+        android:divider="@drawable/gap_vertical"
         android:orientation="vertical"
         android:showDividers="middle"
-        android:divider="@drawable/gap_vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -62,8 +62,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/click_button"
-            android:paddingVertical="16dp"
             android:paddingHorizontal="24dp"
+            android:paddingVertical="16dp"
             android:text="SHOW ACHIEVEMENTS"
             android:textAlignment="center"
             android:textColor="@color/black"
@@ -74,15 +74,15 @@
             android:id="@+id/load_achievements_data_button"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
             android:background="@drawable/click_button"
-            android:paddingVertical="16dp"
             android:paddingHorizontal="24dp"
+            android:paddingVertical="16dp"
             android:text="LOAD ACHIEVEMENTS DATA"
             android:textAlignment="center"
             android:textColor="@color/black"
             android:textSize="14sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="gone" />
 
     </LinearLayout>
 
