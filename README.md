@@ -1,3 +1,3 @@
 # Squares Addition
 
-Practise project for hands-on practise in implementing Google Play Games Services (GPGS) in Java.
+Android Project for hands-on experience with Google Play Games Services (GPGS) in Java.
