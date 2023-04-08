@@ -48,225 +48,6 @@ import com.google.android.gms.tasks.Task;
 
 import java.util.List;
 
-/*  Notes related to Google Play Games Services (GPGS)
-    (1) Consent Screen (In GCP Project) =>
-        (i) Remember to make 2 OAuth 2.0 Client Ids for Android, one with SHA-1 certificate fingerprint of the debug variant
-        of the app which can be found by running 'signingReport' in Gradle in Android Studio and the other with SHA-1
-        certificate fingerprint of the release variant of the app which can be found in the Google Play Console -> Setup ->
-        App Integrity -> App signing -> App signing key certificate
-        (ii) Thus create 2 Android credentials in the Google Play Console -> Play Games services -> Setup and management ->
-        Configuration -> Credentials. One can be used while development and the other for production.
-        (iii) After publishing the code changes with GPGS features to production. The users were automatically signed in
-        without any prompt which showed the Consent Screen for user to accept. Most likely, this is because the scopes which
-        we added (as instructed in the documentation) while creating the consent screen were 'Non-sensitive scopes'. However,
-        we need to check if this holds if we add some info like App logo, link to 'Terms of Service, 'Privacy Policy' etc. to
-        the Consent Screen due to which our Consent Screen may require to go through verification.
-    (2) Anti-Piracy =>
-        (i) The option to turn this on or off is available at Play Console -> Current App -> Play Games services -> Setup
-        and management -> Configuration -> Credentials -> <In any Android credential>
-        (ii) We are currently keeping this option as 'OFF' but should turn this 'ON' when we have published the code to
-        production.
-    (3) Sign-In =>
-        (i) The GPGS SDK will automatically attempt to login to GPGS at the start of the game without us having to
-        do anything in code to make that happen.
-        (ii) We have come across a sign-in even without internet connection i.e. when the device is offline. So, sign-in can
-        in fact happen even if the device is offline.
-        (iii) Best Practise : In-case, the user did not login then we should show a button to the user so that the user can
-        login when he/she is ready. This button should be placed where it's most visible and accessible (so as to increase
-        the login rates of the users) for e.g. on the Homepage. We should immediately hide this button when login is
-        successful. Optionally, we can also place this button at one more place like the settings page (Remember, it is not
-        recommended to put this button buried deep inside the app like the settings page if we are providing this trigger
-        button there only and no place else).
-        (iv) Best Practise : Whenever we are trying to access a GPGS feature we should verify if the user has signed in so
-        as to avoid any unexpected & incorrect behaviour when to run the code for that feature. If we find out that the user
-        is not signed in when we should somehow show this to the user in the UI and give to button to sign in.
-        (v) Decide what needs to be done to the commented out code where we can retrieve the Player ID to identify the user.
-        Refer to this link if required (especially the 'Note' boxes related to 'Enable server-side access' etc.) ->
-        https://developer.android.com/games/pgs/android/android-signin#get_the_sign-in_result
-    (4) Leaderboards =>
-        (i) When we use the submitScore() method to submit our score to the leaderboard GPGS will by itself check if the
-        submitted score is better than the current entry in the daily, weekly & all-time score list. If it is, GPGS will
-        update the corresponding leaderboard.
-        (ii) The methods to retrieve a player's scores from GPGS are also very well written keeping in mind all the
-        possibilities. The code for this can be found in this MainActivity.java file
-        (iii) We can have a maximum of 70 leaderboards for a game.
-        (iv) The Play Games SDK automatically creates daily, weekly, and all-time versions of every leaderboard that you
-        create. There's no need for us to create separate leaderboards for each time frame.
-        (v) Public and Social Leaderboards : Social leaderboards consist of entries of the user's friends as per Google Play
-        Games i.e. the scores from these friends and ranking is also given as per what the ranking is among these friends.
-        Public leaderboards consist of entries of all the players who have chosen to share their gameplay activity to
-        everyone in the Google Play Games settings i.e. their scores will be visible and a part of this leaderboard.
-        (vi) Before showing the leaderboard to the user, we will have to check first if the user has an entry on the
-        leaderboard. If not, then we will have to prompt the user to change the settings for his account in Google Play
-        Games. Not only will we have to check if the current player's score has been submitted to the leaderboard but also
-        check if the player is currently signed in or not or the methods used to retrieve the leaderboards data may not
-        function properly.
-        (vii) When we show the leaderboards using a custom UI, then we should take care of the fact that the player Id may
-        contain Unicode characters (for example, if the name has non-english characters).
-        (viii) All scores are submitted to leaderboards and stored internally as long integers, the Games service can present
-        them to the user in a number of different formats: (1) Numeric (2) Time (3) Currency. We may need to revisit this
-        section for info on submitting scores if we are doing something new.
-        (ix) Editing a leaderboard : Mainly consists of 3 functions which are as follows ->
-        (a) Undo an edit (b) Delete a leaderboard (c) Reset a leaderboard
-        For more information we can refer to the link ->
-        https://developers.google.com/games/services/common/concepts/leaderboards#edit_a_leaderboard
-        (x) Add translations for leaderboards : Refer to the following link ->
-        https://developers.google.com/games/services/common/concepts/leaderboards#add_translations_for_leaderboards
-        (xi) Hide leaderboard scores : Basically talks about the 'Leaderboard tamper Protection' feature where the
-        suspected tampered scores are hidden automatically in the leaderboard. For more info. refer to the link ->
-        https://developers.google.com/games/services/common/concepts/leaderboards#hide_leaderboard_scores
-        (xii) For each line of Custom UI we should have the following data (with examples) ->
-        (a) Gamer name/Display name/User Id = LeaderboardScore.getScoreHolderDisplayName() = (String) HokageMeetPatel1997
-        (b) Rank (with ordinals like 1st, 22nd, 43rd, 5th etc.) = LeaderboardScore.getDisplayRank() = (String) 9th
-            Rank (without ordinals, simple long integer) = LeaderboardScore.getRank() = (long) 9
-        (c) Score = LeaderboardScore.getRawScore() = (long) 47
-        (d) Avatar Image = Refer from images of object info in Google Drive folder for this app
-        (xiii) Notes related to the methods of a important classes the related to the Leaderboards feature are as follows -
-        (a) LeaderboardsClient : Refer to this link to check out all the methods of this class ->
-            https://developers.google.com/android/reference/com/google/android/gms/games/LeaderboardsClient
-            However, all the relevant methods for our use have been tested out which are namely getLeaderboardIntent(),
-            loadCurrentPlayerLeaderboardScore(), loadPlayerCenteredScores(), loadTopScores() & submitScore()
-        (b) LeaderboardsClient.LeaderboardScores : Refer to this link to check out all the methods of this class ->
-            https://developers.google.com/android/reference/com/google/android/gms/games/LeaderboardsClient.LeaderboardScores
-            However, the only relevant method of this class is getScores() method
-        (c) LeaderboardScoreBuffer : The only method this class consists which also happens to be relevant for us is the
-            get() method which returns a LeaderboardScore object and this method should be used as shown in the code below
-        (xiv) Sample data in the objects of important classes related to the leaderboards feature can be found in text files
-        in Google Drive. The classes namely are as follows ->
-        (a) LeaderboardScore (b) Player (c) CurrentPlayerInfo
-        (d) PlayerLevelInfo (e) PlayerRelationshipInfo (f) PlayerLevel
-        (xv) The 'Google Play Games' app is required to be installed for this feature to work, but the prompt to the user
-        to install the app is handled by the inbuilt code itself and we do not have to write any code for this. This flow
-        will work correctly as mentioned above, only if the user is signed in.
-    (5) Achievements =>
-        (i) The basic elements which are associated with every achievement are as follows -
-        (a) Id (b) Name (c) Description (d) Icon (e) List order
-        To know more about these refer -> developers.google.com/games/services/common/concepts/achievements#the_basics
-        (ii) Achievements can be in any one of the following 3 states
-        (a) Hidden State : A hidden achievement means that details about the achievement are hidden from the player. The
-            Google Play games services provides a generic placeholder description and icon for the achievement while it's in
-            a hidden state. We recommend making an achievement hidden if it contains a spoiler you don't want to reveal about
-            your game too early (for example, "Discover that you were a ghost all along!").
-        (b) Revealed State : A revealed achievement means that the player knows about the achievement, but hasn't earned
-            it yet. Most achievements start in the revealed state.
-        (c) Unlocked State : An unlocked achievement means that the player has successfully earned the achievement. An
-            achievement can be unlocked offline. When the game comes online, it syncs with the Google Play games services to
-            update the achievement's unlocked state.
-        (iii) Achievements can be designated as (a) Standard OR (b) Incremental
-        (iv) Incremental Achievements : (a) Generally, an incremental achievement involves a player making gradual progress
-            towards earning the achievement over a longer period of time. As the player makes progress towards the
-            incremental achievement, you can report the player's partial progress to the Google Play games services.
-        (b) Incremental achievements are cumulative across game sessions, and progress cannot be removed or reset from within
-            the game. For example, "Win 50 games" would qualify as an incremental achievement. "Win 3 games in a row" would
-            not, as the player's progress would be reset when they lose a game.
-        (c) When creating an incremental achievement, you must define the total number of steps required to unlock it (this
-            must be a number between 2 and 10,000). As the user makes progress towards unlocking the achievement, you should
-            report the number of additional steps the user has made to the Google Play games services. Once the total number
-            of steps reaches the unlock value, the achievement is unlocked (even if it was hidden). There's no need for you
-            to store the user's cumulative progress.
-        (v) Points : Achievements have a point value associated with them. The total points associated with an achievement
-        must be a multiple of 5 and the whole game can never have a total of more than 1000 points for all of its
-        achievements (although it can have less). In addition, no single achievement can have more than 200 points.
-        (vi) Earning experience points (XP) : Players can gain levels on their Game Profile when they earn achievements in
-        Play Games enabled games. For every point associated with an achievement, the player gains 100 experience points (XP)
-        when they earn that achievement. In other words -
-        XP for an achievement = 100 * (point value for the achievement)
-        Play Games services keeps track of the XP earned by each player and sends out a notification to the Google Play Games
-        app when the player has earned enough points to 'level up'. Players can view their level and XP history from their
-        Profile page in the Google Play Games app.
-        Important Point - The points allotted to an achievement can be changed even after the achievement is published
-        (vii) Minimum achievements : A game that integrates achievements should have at least 5 achievements before it is
-        published. You can test with fewer than 5 achievements, but it is recommended you have at least 5 achievements
-        created before you publish your game.
-        (viii) Maximum achievements : The number of achievements is limited by the points limits and distribution. With a
-        maximum number of points of 1000, and each achievement assigned 5 points, the maximum number of achievements is 200.
-        However, if achievements are assigned more points then the number of achievements available decreases as a result.
-        (ix) Icon guidelines : We can refer to these guidelines in the document as follows ->
-        https://developers.google.com/games/services/common/concepts/achievements#icon_guidelines
-        (x) Creating an achievement : To know more about how to create an achievement refer to the document below -
-        https://developers.google.com/games/services/common/concepts/achievements#creating_an_achievement
-        (xi) Editing an achievement : This can be done by the following 3 methods -
-        (a) Undoing an edit
-        (b) Deleting an achievement - Once your achievement has been published, it cannot be deleted. You can only delete an
-            achievement in a pre-published state by clicking the button labeled Delete at the bottom of the form for that
-            achievement.
-        (c) Resetting an achievement - You can only reset player progress data for your draft achievements.
-        To know more about this refer to the following link -
-        https://developers.google.com/games/services/common/concepts/achievements#editing_an_achievement
-        (xii) For incremental achievements, using the method setSteps() is more precise and convenient as compared to the
-        method increment() as it allows us to set the exact number of steps completed as progress towards and achievement.
-        If the code is not written perfectly, then using method increment() may make the number of steps reach a value that
-        is not what we expect because of some bug in the code. Thus, it's far more convenient to use setSteps() method, since
-        after using it we know exactly how many steps towards an achievement have been completed.
-        (xiii) If we pass the maximum number of steps required to unlock an incremental achievement as argument in the method
-        setSteps(), then the achievement is automatically unlocked by GPGS without us have to write any code to handle this.
-        (xiv) An important thing to remember here is that after calling the reveal() method, GPGS does NOT give a
-        notification in a toast message, like it does when an achievement is unlocked. So, we need to do this by ourselves
-        so as to stimulate curiosity and excitement in the user about the newly revealed achievement as to know what it is.
-        (xv) It seems to feel like a wise-man's strategy to reveal an achievement (either Standard or Incremental) at some
-        point of progress towards that achievement for e.g. at 25% progress or 50% progress etc. to reveal a hidden
-        achievement to the user so as to trigger excitement & engagement in the user regarding the newly revealed achievement
-        (xvi) An important thing to note here is that as 'Steps needed' i.e. the no. of steps in an Incremental achievement
-        is a part of it's type being 'Incremental' it cannot be changed once the achievement has been published
-        (xvii) Notes related to the methods of a important classes the related to the Achievements feature are as follows -
-        (a) AchievementsClient : Refer to this link to check out all the methods of this class ->
-        https://developers.google.com/android/reference/com/google/android/gms/games/AchievementsClient
-        However, all the relevant methods for our use have been tested out which are namely getAchievementsIntent(),
-        increment(), load(), reveal(), setSteps() & unlock().
-        (b) AchievementsBuffer : Refer to this link to check out all the methods of this class ->
-        https://developers.google.com/android/reference/com/google/android/gms/games/achievement/AchievementBuffer
-        However, the only relevant method of this class is get() method which returns an object of class 'Achievement'.
-        (xviii) Sample data in the objects of important classes related to the achievements feature can be found in text
-        files in Google Drive. The classes namely are as follows ->
-        (a) Achievement (b) Player
-        (xix) The 'Google Play Games' app is required to be installed for this feature to work, but the prompt to the user
-        to install the app is handled by the inbuilt code itself and we do not have to write any code for this. This flow
-        will work correctly as mentioned above, only if the user is signed in.
-    (6) Publishing API (Reference - https://developer.android.com/games/pgs/publishing/publishing) =>
-        (i) Allows us to automate some tasks or functions which can be done manually through the Google Play Console as well.
-        (ii) As of right now, we choose to ignore this API until some need of this comes later.
-    (7) Management API (Reference - https://developer.android.com/games/pgs/management/management) =>
-        (i) As of right now, we choose to ignore this API until some need of this comes later.
-    (8) Things that cannot be changed after they are published =>
-        (i) Saved games -> In 'Edit properties' in 'Configuration -> Can't be turned off after publishing if 'On' is ticked
-        and game is published
-        (ii) Incremental achievements -> In 'Achievements' in a specific achievement -> This can't be changed after the
-        achievement is published
-        (iii) Initial state -> (a) In 'Achievements' in a specific achievement & (b) In 'Events' in a specific
-        event -> This can't be changed after the achievement is published
-        (iv) Points -> In 'Achievements' -> These are XP Points for a Google Play Games player which are added after
-        unlocking an achievement to their total profile experience and per one achievement max. of 200 points can be given
-        and for the whole game among all achievements a max. of 1000 points can be given
-        (v) Limits -> In 'Leaderboards' in a specific leaderboard -> This is the upper limit and/or lower limit for score in
-        a leaderboard
-*/
-// The list of TODOs related to this project is as follows
-/* TODO -> Add details to the Consent Screen like App logo, link to 'Terms of Service', 'Privacy Policy' etc. after which the
-           Consent Screen may be required to go through verification process by Google. After the verification is
-           completed and the Consent Screen is published to production, then check if the user when does the very 1st sign-in
-           in the app, is he/she prompted with a Consent Screen or directly allowed sign-in into the app.
-*/
-/* TODO -> The code written for achievements code is not the best and it can go wrong in the following ways -
-           (1) Suppose if one user plays the game 25 times, then that user will unlock all achievements related to the count
-           of games played which is as expected. But now if a different user signs in who has not unlocked those achievements
-           will never be able to unlock those achievements as the value of the variable 'totalGamesPlayed' is stored only
-           locally and only used under certain conditions to submit progress for achievement via the setSteps() method. The
-           value of the variable 'totalGamesPlayed' is NOT stored online and also NOT fetched from an online database, thus
-           it will be incorrect for different users
-           (2) Ideally we should store the info about the achievements related to score being unlocked in a boolean local
-           variable so as to reduce the API use and keep under the allowed quota. This is what we have done now as well.
-           But this will mean that if the 1st user has unlocked these achievements and then a 2nd user signs in the app who
-           has not unlocked these achievements, then he/she will never be able to unlock these achievements as locally the
-           info about these achievements is that they have been unlocked
-                Thus, the data which is stored locally and is in some way or the other used for GPGS related features can
-           cause errors/unexpected behaviours etc. especially if the user signs in with a different Google Play Games
-           profile. This is the reason why we should explore the 'Saved Games' feature once. If we do explore this feature
-           also make sure to monitor the API usage consumption in GCP project of the GPGS API so as to ensure that we stay
-           within the quota limit
-*/
-/* TODO -> We have added all the required TODOs to '2048 Champs' which are relevant for the 1st release with GPGS features.
-           So do check them out before the 1st release with GPGS features.
-*/
 public class MainActivity extends AppCompatActivity implements
         InfoFragment.OnInfoFragmentInteractionListener,
         NavigationFragment.OnNavigationFragmentInteractionListener,
@@ -407,8 +188,7 @@ public class MainActivity extends AppCompatActivity implements
                     gpgsSignInStatusTextView.setText("Google Play Games Sign In Status : Signed In ✅");
                     gpgsSignInImageView.setVisibility(View.GONE);
                     isUserSignedIn = true;
-                    /* TODO -> Remove the following code if we do find a way to implement the 'Enable server-side access'
-                               document in the GPGS documentation
+                    /*
                     PlayGames.getPlayersClient(MainActivity.this).getCurrentPlayer()
                             .addOnCompleteListener(new OnCompleteListener<Player>() {
                         @Override
@@ -489,8 +269,6 @@ public class MainActivity extends AppCompatActivity implements
                         Log.i("Custom Debugging", "In addOnCompleteListener, " +
                                 "LeaderboardScore.getScoreHolderDisplayName() = (String) " + playerDisplayName);
                         bestScoreForSignedInPlayerFromGPGS[0] = rawScore;
-                    } else {
-                        // TODO -> This too is an error branch and we should handle this as mentioned in the TODO below
                     }
                 }
             }).addOnFailureListener(new OnFailureListener() {
@@ -498,10 +276,6 @@ public class MainActivity extends AppCompatActivity implements
                 public void onFailure(@NonNull Exception e) {
                     Log.i("Custom Debugging", "onFailure: Failed to fetch GPGS score by " +
                             "LeaderboardsClient.loadCurrentPlayerLeaderboardScore() method");
-                    /* TODO -> We should remove the log statement above as it is just for our understanding and handle this
-                               error branch with something like a dialog which gives a similar message to the above
-                               log statement
-                    */
                 }
             });
         /*
@@ -512,7 +286,6 @@ public class MainActivity extends AppCompatActivity implements
                 public void onComplete(@NonNull Task<AnnotatedData<LeaderboardScore>> task) {
                     if (!task.isSuccessful()) {
                         Log.i("Custom Debugging", "Failed to complete task of fetching score");
-                        // TODO -> This too is an error branch and we should handle this as mentioned in the TODO above
                     }
 
                     if (task.getResult() != null) {
@@ -533,10 +306,10 @@ public class MainActivity extends AppCompatActivity implements
                                     "LeaderboardScore.getScoreHolderDisplayName() = (String) " + playerDisplayName);
                             bestScoreForSignedInPlayerFromGPGS[0] = tempLong;
                         } else {
-                            // TODO -> This too is an error branch and we should handle this as mentioned in the TODO above
+                            Log.i("Custom Debugging", "Failed to complete task of fetching score");
                         }
                     } else {
-                        // TODO -> This too is an error branch and we should handle this as mentioned in the TODO above
+                        Log.i("Custom Debugging", "Failed to complete task of fetching score");
                     }
                 }
             });
@@ -546,9 +319,7 @@ public class MainActivity extends AppCompatActivity implements
             bestScoreForSignedInPlayerFromGPGS[0] to be updated from the above listeners and we send a value fetched from the
             GPGS leaderboard to the GamingZoneFragment
         */
-        /* TODO -> For the 2 seconds of time we are waiting for the value to be fetched from GPGS and updated, we can show
-                   like a loading screen etc. in the meanwhile
-        */
+
         new CountDownTimer(2000, 10000) {
             @Override
             public void onTick(long l) {}
@@ -782,8 +553,6 @@ public class MainActivity extends AppCompatActivity implements
                             Log.i("Custom Debugging", "for i = " + i + ":\n" + "displayName = " + displayName
                                     + ", displayRank = " + displayRank + ", rawScoreValue = " + rawScoreValue);
                         }
-                    } else {
-                        // TODO -> This too is an error branch and we should handle this as mentioned in the TODO below
                     }
 
                     if (leaderboardScores != null) {
@@ -795,10 +564,6 @@ public class MainActivity extends AppCompatActivity implements
                 public void onFailure(@NonNull Exception e) {
                     Log.i("Custom Debugging", "onFailure: Failed to fetch GPGS scores from leaderboard by " +
                             "LeaderboardsClient.loadTopScores() method");
-                    /* TODO -> We should remove the log statement above as it is just for our understanding and handle this
-                               error branch with something like a dialog which gives a similar message to the above
-                               log statement
-                    */
                 }
             });
     }
@@ -834,8 +599,6 @@ public class MainActivity extends AppCompatActivity implements
                             Log.i("Custom Debugging", "for i = " + i + ":\n" + "displayName = " + displayName
                                     + ", displayRank = " + displayRank + ", rawScoreValue = " + rawScoreValue);
                         }
-                    } else {
-                        // TODO -> This too is an error branch and we should handle this as mentioned in the TODO below
                     }
 
                     if (leaderboardScores != null) {
@@ -847,10 +610,6 @@ public class MainActivity extends AppCompatActivity implements
                 public void onFailure(@NonNull Exception e) {
                     Log.i("Custom Debugging", "onFailure: Failed to fetch GPGS scores from leaderboard by " +
                             "LeaderboardsClient.loadPlayerCenteredScores() method");
-                    /* TODO -> We should remove the log statement above as it is just for our understanding and handle this
-                               error branch with something like a dialog which gives a similar message to the above
-                               log statement
-                    */
                 }
             });
     }
@@ -922,8 +681,6 @@ public class MainActivity extends AppCompatActivity implements
                             Log.i("Custom Debugging", "achievementState = TYPE_INCREMENTAL");
                         }
                     }
-                } else {
-                    // TODO -> This too is an error branch and we should handle this as mentioned in the TODO below
                 }
 
                 if (achievementBuffer != null) {
@@ -935,10 +692,6 @@ public class MainActivity extends AppCompatActivity implements
             public void onFailure(@NonNull Exception e) {
                 Log.i("Custom Debugging", "onFailure: Failed to fetch GPGS achievements by " +
                         "AchievementClient.load() method");
-                /* TODO -> We should remove the log statement above as it is just for our understanding and handle this
-                           error branch with something like a dialog which gives a similar message to the above
-                           log statement
-                */
             }
         });
     }
